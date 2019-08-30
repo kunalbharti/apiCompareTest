@@ -1,0 +1,1879 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "EV Platform Specifications",
+    "description": "<p>The MapmyIndia EV API Platform is provided for partners to integrate directly with Charge and Drive. The API provides functionality for local charging, where users identify at a charging station in order to start a charging session, and remote charging, where the partner requests a charging session through this API on behalf of the user.</p><p>There are two parts to integrating with the Hub API. Endpoints in the <code>charging-sessions</code> section and <code>charging-stations</code> section are provided by Charge and Drive for partners to make requests to. Endpoints in the <code>partner-api</code> section should be implemented by the partner, and the endpoints provided to Charge and Drive in order for Charge and Drive to make requests towards the partner.</p><p>Please note that this API is undergoing development and aspects of it may change, though we will try to work with integrating partners in order to minimise any disruption caused by such changes, and maintain backwards compatibility. The Swagger documentation presented here in particular is temporary.\n<h2>Important notes</h2><ul>  <li>URLs: the urls to use for stage and prod are: <code>https://cd-hub-gw-stage.tingcore-infra.com</code> and <code>https://cd-hub-gw.tingcore-infra.com</code></li>  <li>Authentication:     <ul>      <li>To call our API, authorization is required through an API key provided in request header <code>x-api-key</code>. For example <code>x-api-key: 'abc123'</code> </li>      <li>For us to call your API, if your endpoint requires API key authorization, then the API key is provided in request header <code>x-api-key</code>. For example <code>x-api-key: 'abc123'</code> </li>    </ul>  </li>  <li>For any issues or questions please submit it to the support portal: <a href=\"https://jira.tingcore-infra.com/servicedesk/customer/portal/14\" target=\"_blank\">C&D - API Support</a>, if you haven't got access to the support portal contact your service account manager with any questions</li></ul>\nExample request:<br><code>curl -X GET --header 'Accept: application/json' --header 'x-api-key: yourApiKeyHere' 'https://cd-hub-gw-stage.tingcore-infra.com/v1/charging-stations'</code>",
+    "contact": {},
+    "version": "V1.0.0"
+  },
+  "servers": [
+    {
+      "url": "//cd-hub-gw-stage.tingcore-infra.com/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "charging-session",
+      "description": "API provided by Charge and Drive for remotely starting and stopping sessions and fetching Charge Detail Records."
+    },
+    {
+      "name": "charging-station",
+      "description": "API to fetch charging station information"
+    },
+    {
+      "name": "partner-api",
+      "description": "API implemented by you, the integration partner. Charge and Drive will use this API to send events, Charge Detail Records, and identification requests to your service."
+    }
+  ],
+  "paths": {
+    "/v1/charge-detail-record": {
+      "post": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Receive a Charge Detail Record after a session has completed.",
+        "description": "<p>Charge and Drive posts a Charge Detail Record (CDR) after the conclusion of a charging session.</p><p>Note that the CDR may contain a price for the session. This price is informative only, and is based on the end-user price set within Charge and Drive for the connector used in the session.</p> <p>You need to implement this endpoint if you want to receive records of charging sessions.</p>",
+        "operationId": "postCdrUsingPOST",
+        "requestBody": {
+          "description": "chargeDetailRecord",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargeDetailRecord"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/charging-sessions": {
+      "get": {
+        "tags": [
+          "charging-session"
+        ],
+        "summary": "Get Charge Detail Records in bulk",
+        "description": "This provides all charge detail records for completed sessions. The response includes a cursor value - use this in future requests to obtain all CDRs after the last one in the response. Note that no guarantees are provided regarding the ordering of the CDRs produced - only that no CDR provided <em>before</em> a given cursor will also be provided in response to a request for CDRs <em>after</em> the same cursor.",
+        "operationId": "getChargingDataRecordsUsingGET",
+        "parameters": [
+          {
+            "name": "fromCursor",
+            "in": "query",
+            "description": "fromCursor",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "value range=[1, 100]",
+            "allowEmptyValue": false,
+            "schema": {
+              "maximum": 100,
+              "exclusiveMaximum": false,
+              "minimum": 1,
+              "exclusiveMinimum": false,
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResonse«ChargeDetailRecord»"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "charging-session"
+        ],
+        "summary": "Request a remote session start.",
+        "description": "Request that a charging session be started remotely on the given EVSE, on behalf of the given user identity. A successful response indicates that the request has been received and queued. When the session has successfully been started, a STARTED event will be posted to your partner-api SessionEvents endpoint.",
+        "operationId": "startChargingSessionUsingPOST",
+        "requestBody": {
+          "description": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartChargingSession"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "The request is accepted and a charging session is expected to be created shortly.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not allowed to start a charging session on the given EVSE.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The EVSE could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/charging-sessions/{session-id}": {
+      "get": {
+        "tags": [
+          "charging-session"
+        ],
+        "summary": "Get a Charge Detail Record for a given session",
+        "description": "When a session has been completed, a Charge Detail Record which describes the session can be provided. The Charge Detail Record provides details such as the time, energy used, and the identity of the user of the session.",
+        "operationId": "getChargingDataRecordUsingGET",
+        "parameters": [
+          {
+            "name": "session-id",
+            "in": "path",
+            "description": "session-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChargeDetailRecord"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The session is not in a state which allows a Charge Detail Record to be provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The session could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "charging-session"
+        ],
+        "summary": "Request a remote session stop",
+        "description": "Request that a charging session be stopped remotely on the given EVSE, on behalf of the given user identity. The user identity needs to have identical representation to the identity that is used to start the session. For example, if the identity that started the session has a JSON representation, then the user identity in this request needs to have the same JSON representation.A successful response indicates that the request has been received and queued. When the session has successfully been stopped, a STOPPED event will be posted to your partner-api SessionEvents endpoint.",
+        "operationId": "stopChargingSessionUsingPOST",
+        "parameters": [
+          {
+            "name": "session-id",
+            "in": "path",
+            "description": "session-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StopChargingSession"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "The request is accepted and the specified charging session is expected to be stopped shortly.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The user is not allowed to stop the given charging session.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The session could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/charging-sessions/{session-id}/status": {
+      "get": {
+        "tags": [
+          "charging-session"
+        ],
+        "summary": "Get the status of a charging session. A session might be in state like session started, request accepted, denied etc. When a session is in state of denied, it might be the reason that central system declined the request according to business rules. When a session is in state of failed, it might be the reason that charging stations local state does not support the request.",
+        "operationId": "getChargingSessionStatusUsingGET",
+        "parameters": [
+          {
+            "name": "session-id",
+            "in": "path",
+            "description": "session-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChargingSessionStatus"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The session could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/charging-stations": {
+      "get": {
+        "tags": [
+          "charging-station"
+        ],
+        "summary": "Get static information about charging stations in bulk.",
+        "description": "This provides paginated static data on all charging stations. The response includes a cursor value - use this in future requests to obtain all charging stations after the last one in the response. Note that no guarantees are provided regarding the ordering of the charging stations produced - only that no charging station provided <em>before</em> a given cursor will also be provided in response to a request for charging stations <em>after</em> the same cursor.",
+        "operationId": "getChargingStationsUsingGET",
+        "parameters": [
+          {
+            "name": "fromCursor",
+            "in": "query",
+            "description": "fromCursor",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "limit",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "priced",
+            "in": "query",
+            "description": "Set to true if pricing info is expected from response. Default false.",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Target source of the pricing, e.g., ALL, SMS etc.",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "SMS",
+                "APP",
+                "RFID"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageResonse«ChargingStation»"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Receive a charging station upon creation.",
+        "description": "<p>Charge and Drive posts a charging station after a charging station is created.</p><p>You need to implement this endpoint if you want to receive static data of charging stations.</p>",
+        "operationId": "postChargingStationOnCreationUsingPOST",
+        "requestBody": {
+          "description": "chargingStation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargingStation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/charging-stations/-/connectors/{evse-id}": {
+      "get": {
+        "tags": [
+          "charging-station"
+        ],
+        "summary": "Get static information for an individual connector",
+        "operationId": "getConnectorUsingGET",
+        "parameters": [
+          {
+            "name": "evse-id",
+            "in": "path",
+            "description": "evse-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priced",
+            "in": "query",
+            "description": "Set to true if pricing info is expected from response. Default false.",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Target source of the pricing, e.g., ALL, SMS etc.",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "SMS",
+                "APP",
+                "RFID"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Connector"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/charging-stations/-/connectors/{evse-id}:dynamic": {
+      "get": {
+        "tags": [
+          "charging-station"
+        ],
+        "summary": "Get dynamic information for an individual connector",
+        "description": "Get the live status for the given connector - used for establishing whether the connector is online and ready to accept session requests, and (if applicable) to fetch the price for a session on the connector.",
+        "operationId": "getConnectorDynamicDataUsingGET",
+        "parameters": [
+          {
+            "name": "evse-id",
+            "in": "path",
+            "description": "evse-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectorDynamicData"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/charging-stations/{station-id}": {
+      "get": {
+        "tags": [
+          "charging-station"
+        ],
+        "summary": "Get static information for a given charging station",
+        "operationId": "getChargingStationUsingGET",
+        "parameters": [
+          {
+            "name": "priced",
+            "in": "query",
+            "description": "Set to true if pricing info is expected from response. Default false.",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Target source of the pricing, e.g., ALL, SMS etc.",
+            "allowEmptyValue": false,
+            "schema": {
+              "type": "string",
+              "default": "ALL",
+              "enum": [
+                "ALL",
+                "SMS",
+                "APP",
+                "RFID"
+              ]
+            }
+          },
+          {
+            "name": "station-id",
+            "in": "path",
+            "description": "station-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChargingStation"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Receive a charging station upon update.",
+        "description": "<p>Charge and Drive sends a charging station after a charging station is updated.</p><p>You need to implement this endpoint if you want to receive static data of charging stations update.</p>",
+        "operationId": "putChargingStationOnUpdateUsingPUT",
+        "parameters": [
+          {
+            "name": "station-id",
+            "in": "path",
+            "description": "station-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "chargingStation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargingStation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Receive a notification upon charging station deletion.",
+        "description": "<p>Charge and Drive sends a DELETE request after a charging station is removed.</p><p>You need to implement this endpoint if you want to receive notification on charging station deletion.</p>",
+        "operationId": "deleteChargingStationUsingDELETE",
+        "parameters": [
+          {
+            "name": "station-id",
+            "in": "path",
+            "description": "station-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/charging-stations/{station-id}:dynamic": {
+      "get": {
+        "tags": [
+          "charging-station"
+        ],
+        "summary": "Get status of a charging station",
+        "description": "Get the live status for the given charging station - used for establishing whether the charging station is online and ready to accept session requests, and (if applicable) to fetch the price for a charging session.",
+        "operationId": "getChargingStationDynamicDataUsingGET",
+        "parameters": [
+          {
+            "name": "station-id",
+            "in": "path",
+            "description": "station-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChargingStationDynamicData"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/v1/connectors/{evse-id}": {
+      "post": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Receive an availability status update of a connector.",
+        "description": "<p>Charge and Drive posts a dynamic data update when the availability status of a connector changes, e.g., from AVAILABLE to OCCUPIED.</P><p>You need to implement this endpoint if you want to receive dynamic data of connectors.</p>",
+        "operationId": "postConnectorStatusUsingPOST",
+        "parameters": [
+          {
+            "name": "evse-id",
+            "in": "path",
+            "description": "evse-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "connectorDynamicData",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectorDynamicData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/session-events": {
+      "post": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Receive a notification when a session has updated.",
+        "description": "<p>Charge and Drive posts to this endpoint to notify you of session events, i.e. when a charging session starts, stops, or fails. This applies to both local and remote charging scenarios.</p><p>You need to implement this endpoint if you want to be notified when sessions start and stop.</p> ",
+        "operationId": "notifySessionEventUsingPOST",
+        "requestBody": {
+          "description": "event",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargingSessionEvent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/v1/verify-user-key/{user-key}": {
+      "post": {
+        "tags": [
+          "partner-api"
+        ],
+        "summary": "Verify user key",
+        "description": "<p>Used in the local start scenario.</p><br><p>The end-user comes to a charging station and identifies themselves towards the charging station using a key, e.g. by RFID tag. Charge and Drive will send a request to you to identify the user. The user key we send here is as reported by the charging station hardware, for example, RFID tags are usually reported as a hexadecimal string.</p><br><p>The operation optionally accepts payload from the calling party. For example, a valid JSON object like <code>{\"payload\":{\"evseId\":\"evseIdValue\"}}</code> can be the payload.</p><br><p>Your service should respond to this endpoint with an identity representing the user. When we send you the Charge Detail Record for the session, the session belongs to this identity. </p><br><p>You need to implement this endpoint if you want to support local starts. </p>",
+        "operationId": "verifyUserKeyUsingPOST",
+        "parameters": [
+          {
+            "name": "user-key",
+            "in": "path",
+            "description": "user-key",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "payload",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthPayload"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User is not authorized to charge.",
+            "content": {}
+          },
+          "404": {
+            "description": "User key not found",
+            "content": {}
+          }
+        },
+        "deprecated": false,
+        "security": [
+          {
+            "apiKey": [
+              "global"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Connector": {
+        "title": "Connector",
+        "required": [
+          "current",
+          "evseId",
+          "label",
+          "mode",
+          "number",
+          "power",
+          "pricing",
+          "type",
+          "voltage"
+        ],
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "integer",
+            "description": "Current in SI unit, ampere",
+            "format": "int32",
+            "example": 32
+          },
+          "evseId": {
+            "type": "string",
+            "description": "EMI3 ID of connector",
+            "example": "SE*123*E12345*A"
+          },
+          "label": {
+            "type": "string",
+            "description": "Label of connector. Should correspond to the label printed on the hardware"
+          },
+          "mode": {
+            "type": "string",
+            "description": "Electrical standard of the connector",
+            "example": "MODE1",
+            "enum": [
+              "MODE1",
+              "MODE2",
+              "MODE3",
+              "MODE4"
+            ]
+          },
+          "number": {
+            "type": "integer",
+            "description": "Connector number. Uniquely identifies the connector among the connectors on the charging station.",
+            "format": "int32",
+            "example": 1
+          },
+          "power": {
+            "type": "integer",
+            "description": "Power in SI unit, watt",
+            "format": "int32",
+            "example": 22000
+          },
+          "pricing": {
+            "$ref": "#/components/schemas/Pricing"
+          },
+          "type": {
+            "type": "string",
+            "description": "Physical type of connector hardware on the connector",
+            "example": "TYPE1",
+            "enum": [
+              "TYPE1",
+              "TYPE2",
+              "CHADEMO",
+              "CCS",
+              "CHADEMO_AND_CCS",
+              "TYPE1_CABLE",
+              "TYPE2_CABLE",
+              "SCHUKO",
+              "GBT"
+            ]
+          },
+          "voltage": {
+            "type": "integer",
+            "description": "Voltage in SI unit, volt",
+            "format": "int32",
+            "example": 400
+          }
+        },
+        "description": "Static data of a connector"
+      },
+      "Address": {
+        "title": "Address",
+        "required": [
+          "city",
+          "countryIsoCode",
+          "floor",
+          "number",
+          "postalCode",
+          "region",
+          "regionIsoCode",
+          "section",
+          "street"
+        ],
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "description": "City part of address",
+            "example": "Stockholm"
+          },
+          "countryIsoCode": {
+            "type": "string",
+            "description": "Country iso code of address",
+            "example": "SE"
+          },
+          "floor": {
+            "type": "string",
+            "description": "Floor of an address",
+            "example": "Level 5"
+          },
+          "number": {
+            "type": "string",
+            "description": "Street number of an address",
+            "example": "42"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code of an address",
+            "example": "169 56"
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of a an address",
+            "example": "Brussels"
+          },
+          "regionIsoCode": {
+            "type": "string",
+            "description": "Region ISO code",
+            "example": "BRU"
+          },
+          "section": {
+            "type": "string",
+            "description": "Section, e.g. within a car park",
+            "example": "Section B2"
+          },
+          "street": {
+            "type": "string",
+            "description": "Street of an address",
+            "example": "Dalvägen"
+          }
+        }
+      },
+      "ChargingPeriod": {
+        "title": "ChargingPeriod",
+        "required": [
+          "chargingPeriodType",
+          "cost",
+          "duration",
+          "endTime",
+          "energyConsumed",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "chargingPeriodType": {
+            "type": "string",
+            "enum": [
+              "OCCUPIED",
+              "CHARGING",
+              "DISCHARGING",
+              "PARKING"
+            ]
+          },
+          "cost": {
+            "$ref": "#/components/schemas/Cost"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Duration of charging period in whole seconds",
+            "format": "int32"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "The end time of the charging period in ISO 8601 date time format"
+          },
+          "energyConsumed": {
+            "type": "integer",
+            "description": "Energy consumed in watt-hours",
+            "format": "int32"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "The start time of the charging period in ISO 8601 date time format"
+          }
+        }
+      },
+      "ConnectorStatus": {
+        "title": "ConnectorStatus",
+        "required": [
+          "lastUpdated",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "lastUpdated": {
+            "type": "string",
+            "description": "Last time the system updated status on this Connector"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status on this Connector. A connector with a status <code>AVAILABLE</code>, or <code>UNKNOWN</code> may accept remote charging requests. All other statuses indicate that a remote charging request will be denied.",
+            "example": "AVAILABLE",
+            "enum": [
+              "AVAILABLE",
+              "OCCUPIED",
+              "RESERVED",
+              "OUT_OF_ORDER",
+              "UNKNOWN",
+              "NOT_ACCESSIBLE",
+              "DOES_NOT_EXIST"
+            ]
+          }
+        },
+        "description": "Live status of a Connector"
+      },
+      "ChargingSessionStatus": {
+        "title": "ChargingSessionStatus",
+        "required": [
+          "details",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "details": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "REMOTE_START_ACCEPTED",
+              "REMOTE_START_DENIED",
+              "REMOTE_START_FAILED",
+              "REMOTE_STOP_ACCEPTED",
+              "REMOTE_STOP_DENIED",
+              "REMOTE_STOP_FAILED",
+              "STARTED",
+              "STOPPED",
+              "LOCAL_START_AUTHORIZED"
+            ]
+          }
+        }
+      },
+      "Cost": {
+        "title": "Cost",
+        "required": [
+          "currency",
+          "energyCost",
+          "parkingCost",
+          "serviceFee",
+          "tax",
+          "totalCost"
+        ],
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "Currency in ISO4217 format",
+            "example": "EUR"
+          },
+          "energyCost": {
+            "type": "number",
+            "description": "Cost of energy consumed",
+            "example": 2
+          },
+          "parkingCost": {
+            "type": "number",
+            "description": "Cost of parking",
+            "example": 2
+          },
+          "serviceFee": {
+            "type": "number",
+            "description": "Service fees",
+            "example": 2
+          },
+          "tax": {
+            "type": "number",
+            "description": "The amount of tax applied",
+            "example": 1
+          },
+          "totalCost": {
+            "type": "number",
+            "description": "The total cost, in the major currency unit (e.g. for EUR, \"10.23\" indicates 10 euros and 23 cents).",
+            "example": 10.23
+          }
+        },
+        "description": "A cost, broken down into components for different services."
+      },
+      "PageResonse«ChargeDetailRecord»": {
+        "title": "PageResonse«ChargeDetailRecord»",
+        "required": [
+          "content",
+          "fromCursor"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChargeDetailRecord"
+            }
+          },
+          "fromCursor": {
+            "type": "string"
+          }
+        }
+      },
+      "Result": {
+        "title": "Result",
+        "required": [
+          "code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthPayload": {
+        "title": "AuthPayload",
+        "required": [
+          "payload"
+        ],
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "PageResonse«ChargingStation»": {
+        "title": "PageResonse«ChargingStation»",
+        "required": [
+          "content",
+          "fromCursor"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChargingStation"
+            }
+          },
+          "fromCursor": {
+            "type": "string"
+          }
+        }
+      },
+      "Pricing": {
+        "title": "Pricing",
+        "required": [
+          "currency",
+          "description",
+          "profileId",
+          "profileName",
+          "segments"
+        ],
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "description": "currency used in the profile. In ISO4217 format",
+            "example": "EUR"
+          },
+          "description": {
+            "type": "string",
+            "description": "compacted description of the pricing rules",
+            "example": "2 SEK / min, weekdays"
+          },
+          "profileId": {
+            "type": "string",
+            "description": "id of a price profile",
+            "example": "33de7e1ad1d9ae2b"
+          },
+          "profileName": {
+            "type": "string",
+            "description": "name of a price profile",
+            "example": "ProfileForGroupA"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PriceRule"
+            }
+          }
+        },
+        "description": "The price that will be applied when calculating the cost of a charging session."
+      },
+      "Identity": {
+        "title": "Identity",
+        "required": [
+          "empId",
+          "id",
+          "idType"
+        ],
+        "type": "object",
+        "properties": {
+          "empId": {
+            "type": "string",
+            "description": "This is the ID of the EMP who acknowledges the identity of an end user.",
+            "example": "SE*EMP"
+          },
+          "id": {
+            "type": "string",
+            "description": "This is your identifier for a user who is interacting with Charge and Drive. This identifier is used by Charge and Drive for identifying the user who is involved with a charging session. No personally identifying information should be used in this identity.",
+            "example": "5402394354563544\", \"83243f61-fa63-4166-846e-39b11b7051b0\", \"{\"type\":\"rfid\",\"id\":\"fa7ae01bbebc\"}"
+          },
+          "idType": {
+            "type": "string",
+            "enum": [
+              "RFID",
+              "USER_ID",
+              "VEHICLE_ID",
+              "PHONE_NUMBER"
+            ]
+          }
+        }
+      },
+      "PriceComponent": {
+        "title": "PriceComponent",
+        "required": [
+          "price",
+          "stepSize",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "description": "Unit price.",
+            "example": 2
+          },
+          "stepSize": {
+            "type": "integer",
+            "description": "Minimum amount to be billed. This unit will be billed in this step_size blocks. For example: if type is TIME and stepSize is 300, then time will be billed in blocks of 5 minutes; that means, when a charging session takes 6 minutes, 10 minutes (2 blocks of step_size) will be billed.",
+            "format": "int64",
+            "example": 300
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the price component. When type is TIME, the unit is 1 second; when type is ENERGY, the unit is Wh.",
+            "example": "TIME",
+            "enum": [
+              "TIME",
+              "ENERGY",
+              "FLAT"
+            ]
+          }
+        },
+        "description": "The component in a price rule."
+      },
+      "StartChargingSession": {
+        "title": "StartChargingSession",
+        "required": [
+          "evseId",
+          "identity"
+        ],
+        "type": "object",
+        "properties": {
+          "evseId": {
+            "type": "string",
+            "description": "eMI3 standard EVSE ID",
+            "example": "DE*123*E12345*A"
+          },
+          "identity": {
+            "type": "string"
+          }
+        }
+      },
+      "StopChargingSession": {
+        "title": "StopChargingSession",
+        "required": [
+          "identity"
+        ],
+        "type": "object",
+        "properties": {
+          "identity": {
+            "type": "string"
+          }
+        }
+      },
+      "FieldConstraintViolation": {
+        "title": "FieldConstraintViolation",
+        "required": [
+          "errorKey",
+          "field",
+          "message",
+          "rejectedValue"
+        ],
+        "type": "object",
+        "properties": {
+          "errorKey": {
+            "type": "string",
+            "enum": [
+              "MUST_BE_UNIQUE",
+              "MUST_NOT_BE_NULL",
+              "MUST_NOT_BE_NULL_OR_EMPTY",
+              "MUST_NOT_BE_EMPTY",
+              "MUST_NOT_BE_ZERO",
+              "MUST_BE_POSITIVE",
+              "MUST_BE_POSITIVE_OR_ZERO",
+              "MUST_BE_NEGATIVE",
+              "MUST_BE_NEGATIVE_OR_ZERO",
+              "MUST_BE_HIGHER",
+              "MUST_BE_LOWER",
+              "MUST_BE_WITHIN_RANGE",
+              "MUST_BE_VALID"
+            ]
+          },
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "rejectedValue": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "ChargeDetailRecord": {
+        "title": "ChargeDetailRecord",
+        "required": [
+          "chargingCost",
+          "chargingPeriods",
+          "chargingType",
+          "currency",
+          "energyConsumed",
+          "evseId",
+          "identity",
+          "sessionId"
+        ],
+        "type": "object",
+        "properties": {
+          "chargingCost": {
+            "type": "number",
+            "description": "Total cost of the charging session, in the major currency unit (e.g. for EUR, \"10.23\" indicates 10 euros and 23 cents). Note that this cost is the cost that Charge and Drive has calculated based on its internal, user-based, pricing model. It does not necessarily reflect the price that may be charged to a separate EMP, which price may be affected by a separate agreement.",
+            "example": 10.23
+          },
+          "chargingPeriods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChargingPeriod"
+            }
+          },
+          "chargingType": {
+            "type": "string",
+            "description": "Type of charging",
+            "example": "DC",
+            "enum": [
+              "DC",
+              "AC1",
+              "AC3"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "description": "currency in ISO4217 format",
+            "example": "EUR"
+          },
+          "energyConsumed": {
+            "type": "integer",
+            "description": "Total energy consumed in watt-hours",
+            "format": "int32"
+          },
+          "evseId": {
+            "type": "string",
+            "description": "eMI3 standard EVSE ID",
+            "example": "DE*123*E12345*A"
+          },
+          "identity": {
+            "type": "string",
+            "description": "The identity of the user receiving the charging session, provided by you."
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "The session id for the session described by the Charge Detail Record"
+          }
+        },
+        "description": "A record of a charging session. Contains all the details about the session needed for billing, etc. A session consists of one or more charging periods."
+      },
+      "ConnectorDynamicData": {
+        "title": "ConnectorDynamicData",
+        "required": [
+          "connectorStatus",
+          "evseId",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "connectorStatus": {
+            "$ref": "#/components/schemas/ConnectorStatus"
+          },
+          "evseId": {
+            "type": "string",
+            "description": "EMI3 ID of a Connector",
+            "example": "SE*CND*E123ABC*1"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          }
+        },
+        "description": "Dynamic data for a connector"
+      },
+      "ErrorResponse": {
+        "title": "ErrorResponse",
+        "required": [
+          "code",
+          "details",
+          "fieldViolations",
+          "message",
+          "status",
+          "statusCode"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fieldViolations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldConstraintViolation"
+            }
+          },
+          "message": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "Response": {
+        "title": "Response",
+        "required": [
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/Result"
+          }
+        }
+      },
+      "Restriction": {
+        "title": "Restriction",
+        "required": [
+          "daysOfWeek",
+          "endTime",
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "daysOfWeek": {
+            "type": "array",
+            "description": "The weekdays when the restriction is applicable.",
+            "example": [
+              "MONDAY",
+              "TUESDAY"
+            ],
+            "items": {
+              "type": "string",
+              "enum": [
+                "MONDAY",
+                "TUESDAY",
+                "WEDNESDAY",
+                "THURSDAY",
+                "FRIDAY",
+                "SATURDAY",
+                "SUNDAY"
+              ]
+            }
+          },
+          "endTime": {
+            "type": "string",
+            "description": "The time when the restriction stops to apply.",
+            "example": 1020
+          },
+          "startTime": {
+            "type": "string",
+            "description": "The time when the restriction starts to apply.",
+            "example": "09:00"
+          }
+        },
+        "description": "The condition for the price rule to apply."
+      },
+      "ChargingSessionEvent": {
+        "title": "ChargingSessionEvent",
+        "required": [
+          "connectorId",
+          "eventType",
+          "evseId",
+          "identity",
+          "message",
+          "sessionId",
+          "sourceType",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "connectorId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "START",
+              "STOP",
+              "FAILURE"
+            ]
+          },
+          "evseId": {
+            "type": "string",
+            "description": "eMI3 standard EVSE ID, eg DE*123*E12345*A"
+          },
+          "identity": {
+            "type": "string",
+            "description": "User identity provided by you"
+          },
+          "message": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "The Charge and Drive id for the session"
+          },
+          "sourceType": {
+            "type": "string",
+            "description": "The source of the charging session request",
+            "enum": [
+              "LOCAL",
+              "CD_REMOTE",
+              "PARTNER_SYSTEM",
+              "CD_SYSTEM"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The time at which the event occurred, in ISO 8601 date time format"
+          }
+        }
+      },
+      "ChargingStation": {
+        "title": "ChargingStation",
+        "required": [
+          "connectors",
+          "description",
+          "geoLocation",
+          "locationId",
+          "name",
+          "stationId"
+        ],
+        "type": "object",
+        "properties": {
+          "connectors": {
+            "type": "array",
+            "description": "The connectors belonging to the charging station.",
+            "items": {
+              "$ref": "#/components/schemas/Connector"
+            }
+          },
+          "description": {
+            "type": "string",
+            "description": "A more detailed description of the charging station",
+            "example": "Station with a roof"
+          },
+          "geoLocation": {
+            "$ref": "#/components/schemas/GeoLocation"
+          },
+          "locationId": {
+            "type": "string",
+            "description": "Id of the location (previously site) where the charging station is located"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of charging station",
+            "example": "Asset 1"
+          },
+          "stationId": {
+            "type": "string",
+            "description": "Charging station identifier"
+          }
+        },
+        "description": "Static data for a charging station."
+      },
+      "Coordinate": {
+        "title": "Coordinate",
+        "required": [
+          "lat",
+          "lng"
+        ],
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number",
+            "description": "Latitude",
+            "format": "double",
+            "example": 59.368337
+          },
+          "lng": {
+            "type": "number",
+            "description": "Longitude",
+            "format": "double",
+            "example": 18.000525
+          }
+        },
+        "description": "Georgraphic coordinate in decimal latitude/longitude format."
+      },
+      "Price": {
+        "title": "Price",
+        "required": [
+          "cost",
+          "currency",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "cost": {
+            "type": "number",
+            "description": "Cost of charging",
+            "example": 1
+          },
+          "currency": {
+            "type": "string",
+            "description": "currency in ISO4217 format",
+            "example": "EUR"
+          },
+          "unit": {
+            "type": "string",
+            "description": "The model on which the price is based",
+            "example": "PER_KWH",
+            "enum": [
+              "PER_KWH",
+              "PER_HOUR",
+              "PER_MIN"
+            ]
+          }
+        },
+        "description": "The price that will be applied when calculating the price of a session."
+      },
+      "PriceRule": {
+        "title": "PriceRule",
+        "required": [
+          "priceComponents",
+          "restrictions"
+        ],
+        "type": "object",
+        "properties": {
+          "priceComponents": {
+            "type": "array",
+            "description": "The components included in this rule.",
+            "items": {
+              "$ref": "#/components/schemas/PriceComponent"
+            }
+          },
+          "restrictions": {
+            "$ref": "#/components/schemas/Restriction"
+          }
+        },
+        "description": "The price rule that is included in a price profile."
+      },
+      "GeoLocation": {
+        "title": "GeoLocation",
+        "required": [
+          "address",
+          "coordinate"
+        ],
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "coordinate": {
+            "$ref": "#/components/schemas/Coordinate"
+          }
+        },
+        "description": "Geographic location, composition of address and coordinate in latitude and longitude"
+      },
+      "SessionResponse": {
+        "title": "SessionResponse",
+        "required": [
+          "identity",
+          "location",
+          "sessionId"
+        ],
+        "type": "object",
+        "properties": {
+          "identity": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string",
+            "description": "URI for charging session",
+            "example": "/charging-sessions/<session-id>"
+          },
+          "sessionId": {
+            "type": "string"
+          }
+        }
+      },
+      "ChargingStationDynamicData": {
+        "title": "ChargingStationDynamicData",
+        "required": [
+          "connectorStatuses",
+          "lastUpdated",
+          "stationId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "connectorStatuses": {
+            "type": "array",
+            "description": "The status of all of the connectors belonging to this Charging Station",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorDynamicData"
+            }
+          },
+          "lastUpdated": {
+            "type": "string",
+            "description": "Last time the system updated status on this Charging Station"
+          },
+          "stationId": {
+            "type": "string",
+            "description": "Charging Station ID"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of this Charging Station",
+            "example": "ONLINE",
+            "enum": [
+              "ONLINE",
+              "OFFLINE",
+              "UNKNOWN",
+              "NOT_ACCESSIBLE",
+              "DOES_NOT_EXIST"
+            ]
+          }
+        },
+        "description": "Status of a Charging Station including it's connector's statuses"
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}
