@@ -22,23 +22,23 @@
   ],
   "tags": [
     {
-      "name": "charging-session",
-      "description": "API provided by Charge and Drive for remotely starting and stopping sessions and fetching Charge Detail Records."
+      "name": "session",
+      "description": "API provided by MapmyIndia EV Platform for remotely starting and stopping sessions and fetching Charge Detail Records."
     },
     {
-      "name": "charging-station",
-      "description": "API to fetch charging station information"
+      "name": "station",
+      "description": "API to fetch charging station & connector(plug) information from MapmyIndia EV Platform"
     },
     {
-      "name": "partner-api",
-      "description": "API implemented by you, the integration partner. Charge and Drive will use this API to send events, Charge Detail Records, and identification requests to your service."
+      "name": "integrator-api",
+      "description": "API implemented by you, the integration partner. MapmyIndia EV Platform will use this API to send events, Charge Detail Records, and identification requests to your registered & authorized service."
     }
   ],
   "paths": {
     "/v1/charge-detail-record": {
       "post": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Receive a Charge Detail Record after a session has completed.",
         "description": "<p>Charge and Drive posts a Charge Detail Record (CDR) after the conclusion of a charging session.</p><p>Note that the CDR may contain a price for the session. This price is informative only, and is based on the end-user price set within Charge and Drive for the connector used in the session.</p> <p>You need to implement this endpoint if you want to receive records of charging sessions.</p>",
@@ -73,7 +73,7 @@
     "/v1/charging-sessions": {
       "get": {
         "tags": [
-          "charging-session"
+          "session"
         ],
         "summary": "Get Charge Detail Records in bulk",
         "description": "This provides all charge detail records for completed sessions. The response includes a cursor value - use this in future requests to obtain all CDRs after the last one in the response. Note that no guarantees are provided regarding the ordering of the CDRs produced - only that no CDR provided <em>before</em> a given cursor will also be provided in response to a request for CDRs <em>after</em> the same cursor.",
@@ -126,7 +126,7 @@
       },
       "post": {
         "tags": [
-          "charging-session"
+          "session"
         ],
         "summary": "Request a remote session start.",
         "description": "Request that a charging session be started remotely on the given EVSE, on behalf of the given user identity. A successful response indicates that the request has been received and queued. When the session has successfully been started, a STARTED event will be posted to your partner-api SessionEvents endpoint.",
@@ -195,7 +195,7 @@
     "/v1/charging-sessions/{session-id}": {
       "get": {
         "tags": [
-          "charging-session"
+          "session"
         ],
         "summary": "Get a Charge Detail Record for a given session",
         "description": "When a session has been completed, a Charge Detail Record which describes the session can be provided. The Charge Detail Record provides details such as the time, energy used, and the identity of the user of the session.",
@@ -252,7 +252,7 @@
       },
       "post": {
         "tags": [
-          "charging-session"
+          "session"
         ],
         "summary": "Request a remote session stop",
         "description": "Request that a charging session be stopped remotely on the given EVSE, on behalf of the given user identity. The user identity needs to have identical representation to the identity that is used to start the session. For example, if the identity that started the session has a JSON representation, then the user identity in this request needs to have the same JSON representation.A successful response indicates that the request has been received and queued. When the session has successfully been stopped, a STOPPED event will be posted to your partner-api SessionEvents endpoint.",
@@ -332,7 +332,7 @@
     "/v1/charging-sessions/{session-id}/status": {
       "get": {
         "tags": [
-          "charging-session"
+          "session"
         ],
         "summary": "Get the status of a charging session. A session might be in state like session started, request accepted, denied etc. When a session is in state of denied, it might be the reason that central system declined the request according to business rules. When a session is in state of failed, it might be the reason that charging stations local state does not support the request.",
         "operationId": "getChargingSessionStatusUsingGET",
@@ -380,7 +380,7 @@
     "/v1/charging-stations": {
       "get": {
         "tags": [
-          "charging-station"
+          "station"
         ],
         "summary": "Get static information about charging stations in bulk.",
         "description": "This provides paginated static data on all charging stations. The response includes a cursor value - use this in future requests to obtain all charging stations after the last one in the response. Note that no guarantees are provided regarding the ordering of the charging stations produced - only that no charging station provided <em>before</em> a given cursor will also be provided in response to a request for charging stations <em>after</em> the same cursor.",
@@ -451,7 +451,7 @@
       },
       "post": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Receive a charging station upon creation.",
         "description": "<p>Charge and Drive posts a charging station after a charging station is created.</p><p>You need to implement this endpoint if you want to receive static data of charging stations.</p>",
@@ -486,7 +486,7 @@
     "/v1/charging-stations/-/connectors/{evse-id}": {
       "get": {
         "tags": [
-          "charging-station"
+          "station"
         ],
         "summary": "Get static information for an individual connector",
         "operationId": "getConnectorUsingGET",
@@ -549,7 +549,7 @@
     "/v1/charging-stations/-/connectors/{evse-id}:dynamic": {
       "get": {
         "tags": [
-          "charging-station"
+          "station"
         ],
         "summary": "Get dynamic information for an individual connector",
         "description": "Get the live status for the given connector - used for establishing whether the connector is online and ready to accept session requests, and (if applicable) to fetch the price for a session on the connector.",
@@ -588,7 +588,7 @@
     "/v1/charging-stations/{station-id}": {
       "get": {
         "tags": [
-          "charging-station"
+          "station"
         ],
         "summary": "Get static information for a given charging station",
         "operationId": "getChargingStationUsingGET",
@@ -649,7 +649,7 @@
       },
       "put": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Receive a charging station upon update.",
         "description": "<p>Charge and Drive sends a charging station after a charging station is updated.</p><p>You need to implement this endpoint if you want to receive static data of charging stations update.</p>",
@@ -693,7 +693,7 @@
       },
       "delete": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Receive a notification upon charging station deletion.",
         "description": "<p>Charge and Drive sends a DELETE request after a charging station is removed.</p><p>You need to implement this endpoint if you want to receive notification on charging station deletion.</p>",
@@ -728,7 +728,7 @@
     "/v1/charging-stations/{station-id}:dynamic": {
       "get": {
         "tags": [
-          "charging-station"
+          "station"
         ],
         "summary": "Get status of a charging station",
         "description": "Get the live status for the given charging station - used for establishing whether the charging station is online and ready to accept session requests, and (if applicable) to fetch the price for a charging session.",
@@ -767,7 +767,7 @@
     "/v1/connectors/{evse-id}": {
       "post": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Receive an availability status update of a connector.",
         "description": "<p>Charge and Drive posts a dynamic data update when the availability status of a connector changes, e.g., from AVAILABLE to OCCUPIED.</P><p>You need to implement this endpoint if you want to receive dynamic data of connectors.</p>",
@@ -813,7 +813,7 @@
     "/v1/session-events": {
       "post": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Receive a notification when a session has updated.",
         "description": "<p>Charge and Drive posts to this endpoint to notify you of session events, i.e. when a charging session starts, stops, or fails. This applies to both local and remote charging scenarios.</p><p>You need to implement this endpoint if you want to be notified when sessions start and stop.</p> ",
@@ -854,7 +854,7 @@
     "/v1/verify-user-key/{user-key}": {
       "post": {
         "tags": [
-          "partner-api"
+          "integrator-api"
         ],
         "summary": "Verify user key",
         "description": "<p>Used in the local start scenario.</p><br><p>The end-user comes to a charging station and identifies themselves towards the charging station using a key, e.g. by RFID tag. Charge and Drive will send a request to you to identify the user. The user key we send here is as reported by the charging station hardware, for example, RFID tags are usually reported as a hexadecimal string.</p><br><p>The operation optionally accepts payload from the calling party. For example, a valid JSON object like <code>{\"payload\":{\"evseId\":\"evseIdValue\"}}</code> can be the payload.</p><br><p>Your service should respond to this endpoint with an identity representing the user. When we send you the Charge Detail Record for the session, the session belongs to this identity. </p><br><p>You need to implement this endpoint if you want to support local starts. </p>",
