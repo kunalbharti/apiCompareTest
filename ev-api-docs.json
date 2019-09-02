@@ -17,7 +17,8 @@
   },
   "servers": [
     {
-      "url": "//am.mapmyindia.in/"
+      "url": "//am.mapmyindia.in/",
+      "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
     }
   ],
   "tags": [
@@ -32,6 +33,10 @@
     {
       "name": "integrator-api",
       "description": "API implemented by you, the integration partner. MapmyIndia EV Platform will use this API to send events, Charge Detail Records, and identification requests to your registered & authorized service."
+    },
+    {
+      "name": "search",
+      "description": "API to search for charging station & get basic details about stations and connectors(plug) from MapmyIndia EV Platform"
     }
   ],
   "paths": {
@@ -90,6 +95,15 @@
             }
           },
           {
+            "name": "user",
+            "in": "query",
+            "description": "user for whom records are needed",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "description": "value range=[1, 100]",
@@ -129,7 +143,7 @@
           "session"
         ],
         "summary": "Request a remote session start.",
-        "description": "Request that a charging session be started remotely on the given EVSE, on behalf of the given user identity. A successful response indicates that the request has been received and queued. When the session has successfully been started, a STARTED event will be posted to your partner-api SessionEvents endpoint.",
+        "description": "Request that a charging session be started remotely on the given EVSE, on behalf of the given user identity. A successful response indicates that the request has been received and queued. When the session has successfully been started, a STARTED event will be posted to your integrator-api SessionEvents endpoint.",
         "operationId": "startChargingSessionUsingPOST",
         "requestBody": {
           "description": "request",
@@ -255,7 +269,7 @@
           "session"
         ],
         "summary": "Request a remote session stop",
-        "description": "Request that a charging session be stopped remotely on the given EVSE, on behalf of the given user identity. The user identity needs to have identical representation to the identity that is used to start the session. For example, if the identity that started the session has a JSON representation, then the user identity in this request needs to have the same JSON representation.A successful response indicates that the request has been received and queued. When the session has successfully been stopped, a STOPPED event will be posted to your partner-api SessionEvents endpoint.",
+        "description": "Request that a charging session be stopped remotely on the given EVSE, on behalf of the given user identity. The user identity needs to have identical representation to the identity that is used to start the session. For example, if the identity that started the session has a JSON representation, then the user identity in this request needs to have the same JSON representation.A successful response indicates that the request has been received and queued. When the session has successfully been stopped, a STOPPED event will be posted to your integrator-api SessionEvents endpoint.",
         "operationId": "stopChargingSessionUsingPOST",
         "parameters": [
           {
@@ -378,77 +392,6 @@
       }
     },
     "/v1/charging-stations": {
-      "get": {
-        "tags": [
-          "station"
-        ],
-        "summary": "Get static information about charging stations in bulk.",
-        "description": "This provides paginated static data on all charging stations. The response includes a cursor value - use this in future requests to obtain all charging stations after the last one in the response. Note that no guarantees are provided regarding the ordering of the charging stations produced - only that no charging station provided <em>before</em> a given cursor will also be provided in response to a request for charging stations <em>after</em> the same cursor.",
-        "operationId": "getChargingStationsUsingGET",
-        "parameters": [
-          {
-            "name": "fromCursor",
-            "in": "query",
-            "description": "fromCursor",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "limit",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          },
-          {
-            "name": "priced",
-            "in": "query",
-            "description": "Set to true if pricing info is expected from response. Default false.",
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "source",
-            "in": "query",
-            "description": "Target source of the pricing, e.g., ALL, SMS etc.",
-            "allowEmptyValue": false,
-            "schema": {
-              "type": "string",
-              "default": "ALL",
-              "enum": [
-                "ALL",
-                "SMS",
-                "APP",
-                "RFID"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PageResonse«ChargingStation»"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": [
-          {
-            "apiKey": []
-          }
-        ]
-      },
       "post": {
         "tags": [
           "integrator-api"
@@ -483,12 +426,13 @@
         ]
       }
     },
-    "/v1/charging-stations/-/connectors/{evse-id}": {
+    "/v1/places/plugs/{evse-id}": {
       "get": {
         "tags": [
           "station"
         ],
-        "summary": "Get static information for an individual connector",
+        "summary": "Get information for an individual connector",
+        "description": "Get the details & status for the given connector - used for getting connector details including whether the connector is online and ready to accept session requests, and (if applicable) to fetch the price for a session on the connector.",
         "operationId": "getConnectorUsingGET",
         "parameters": [
           {
@@ -546,51 +490,13 @@
         ]
       }
     },
-    "/v1/charging-stations/-/connectors/{evse-id}:dynamic": {
+    "/v1/places/{eLoc}": {
       "get": {
         "tags": [
           "station"
         ],
-        "summary": "Get dynamic information for an individual connector",
-        "description": "Get the live status for the given connector - used for establishing whether the connector is online and ready to accept session requests, and (if applicable) to fetch the price for a session on the connector.",
-        "operationId": "getConnectorDynamicDataUsingGET",
-        "parameters": [
-          {
-            "name": "evse-id",
-            "in": "path",
-            "description": "evse-id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ConnectorDynamicData"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": [
-          {
-            "apiKey": []
-          }
-        ]
-      }
-    },
-    "/v1/charging-stations/{station-id}": {
-      "get": {
-        "tags": [
-          "station"
-        ],
-        "summary": "Get static information for a given charging station",
+        "summary": "Get information for a given charging station",
+        "description": "Get the details & status for the given charging station - used for  getting the station details as well as establishing whether the charging station is online and ready to accept session requests, and (if applicable) to fetch the pricing information for the charging session.",
         "operationId": "getChargingStationUsingGET",
         "parameters": [
           {
@@ -619,7 +525,7 @@
             }
           },
           {
-            "name": "station-id",
+            "name": "eLoc",
             "in": "path",
             "description": "station-id",
             "required": true,
@@ -656,7 +562,7 @@
         "operationId": "putChargingStationOnUpdateUsingPUT",
         "parameters": [
           {
-            "name": "station-id",
+            "name": "eLoc",
             "in": "path",
             "description": "station-id",
             "required": true,
@@ -700,7 +606,7 @@
         "operationId": "deleteChargingStationUsingDELETE",
         "parameters": [
           {
-            "name": "station-id",
+            "name": "eLoc",
             "in": "path",
             "description": "station-id",
             "required": true,
@@ -721,45 +627,6 @@
             "apiKey": [
               "global"
             ]
-          }
-        ]
-      }
-    },
-    "/v1/charging-stations/{station-id}:dynamic": {
-      "get": {
-        "tags": [
-          "station"
-        ],
-        "summary": "Get status of a charging station",
-        "description": "Get the live status for the given charging station - used for establishing whether the charging station is online and ready to accept session requests, and (if applicable) to fetch the price for a charging session.",
-        "operationId": "getChargingStationDynamicDataUsingGET",
-        "parameters": [
-          {
-            "name": "station-id",
-            "in": "path",
-            "description": "station-id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ChargingStationDynamicData"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": false,
-        "security": [
-          {
-            "apiKey": []
           }
         ]
       }
@@ -925,7 +792,8 @@
           "power",
           "pricing",
           "type",
-          "voltage"
+          "voltage",
+          "connectorStatus"
         ],
         "type": "object",
         "properties": {
@@ -938,7 +806,7 @@
           "evseId": {
             "type": "string",
             "description": "EMI3 ID of connector",
-            "example": "SE*123*E12345*A"
+            "example": "IN*123*E12345*A"
           },
           "label": {
             "type": "string",
@@ -991,6 +859,9 @@
             "description": "Voltage in SI unit, volt",
             "format": "int32",
             "example": 400
+          },
+          "connectorStatus": {
+            "$ref": "#/components/schemas/ConnectorStatus"
           }
         },
         "description": "Static data of a connector"
@@ -998,62 +869,81 @@
       "Address": {
         "title": "Address",
         "required": [
+          "houseNumber",
+          "houseName",
+          "poi",
+          "street",
+          "subSubLocality",
+          "subLocality",
+          "locality",
+          "village",
+          "subDistrict",
+          "district",
           "city",
-          "countryIsoCode",
-          "floor",
-          "number",
-          "postalCode",
-          "region",
-          "regionIsoCode",
-          "section",
-          "street"
+          "state",
+          "postalCode"
         ],
         "type": "object",
         "properties": {
-          "city": {
+          "houseNumber": {
             "type": "string",
-            "description": "City part of address",
-            "example": "Stockholm"
+            "description": "house number component of the address",
+            "example": "237"
           },
-          "countryIsoCode": {
+          "houseName": {
             "type": "string",
-            "description": "Country iso code of address",
-            "example": "SE"
+            "description": "house name component of the address",
+            "example": "Statesman Building"
           },
-          "floor": {
+          "poi": {
             "type": "string",
-            "description": "Floor of an address",
-            "example": "Level 5"
-          },
-          "number": {
-            "type": "string",
-            "description": "Street number of an address",
-            "example": "42"
-          },
-          "postalCode": {
-            "type": "string",
-            "description": "Postal code of an address",
-            "example": "169 56"
-          },
-          "region": {
-            "type": "string",
-            "description": "Region of a an address",
-            "example": "Brussels"
-          },
-          "regionIsoCode": {
-            "type": "string",
-            "description": "Region ISO code",
-            "example": "BRU"
-          },
-          "section": {
-            "type": "string",
-            "description": "Section, e.g. within a car park",
-            "example": "Section B2"
+            "description": "POI component of the address",
+            "example": "MapmyIndia"
           },
           "street": {
             "type": "string",
-            "description": "Street of an address",
-            "example": "Dalvägen"
+            "description": "street component of the address",
+            "example": "Bhakti Vedant Swami Marg"
+          },
+          "subSubLocality": {
+            "type": "string",
+            "description": "subSub Locality component of the address",
+            "example": "Block E"
+          },
+          "subLocality": {
+            "type": "string",
+            "description": "sub Locality component of the address",
+            "example": "Sector 12"
+          },
+          "village": {
+            "type": "string",
+            "description": "Village component of the address",
+            "example": "Hatewa"
+          },
+          "subDistrict": {
+            "type": "string",
+            "description": "sub district component of the address",
+            "example": "Kalkaji"
+          },
+          "district": {
+            "type": "string",
+            "description": "District Component component of the address",
+            "example": "Gautam Buddha Nagar District"
+          },
+          "city": {
+            "type": "string",
+            "description": "city component of the address",
+            "example": "New Delhi"
+          },
+          "state": {
+            "type": "string",
+            "description": "State component of an address",
+            "example": "Uttar Pradesh"
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "postal code component of the address",
+            "example": "110020"
           }
         }
       },
@@ -1277,7 +1167,9 @@
           "description",
           "profileId",
           "profileName",
-          "segments"
+          "segments",
+          "cost",
+          "unit"
         ],
         "type": "object",
         "properties": {
@@ -1300,6 +1192,21 @@
             "type": "string",
             "description": "name of a price profile",
             "example": "ProfileForGroupA"
+          },
+          "cost": {
+            "type": "number",
+            "description": "Cost of charging",
+            "example": 1
+          },
+          "unit": {
+            "type": "string",
+            "description": "The model on which the price is based",
+            "example": "PER_KWH",
+            "enum": [
+              "PER_KWH",
+              "PER_HOUR",
+              "PER_MIN"
+            ]
           },
           "segments": {
             "type": "array",
@@ -1384,7 +1291,7 @@
           "evseId": {
             "type": "string",
             "description": "eMI3 standard EVSE ID",
-            "example": "DE*123*E12345*A"
+            "example": "IN*123*E12345*A"
           },
           "identity": {
             "type": "string"
@@ -1491,7 +1398,7 @@
           "evseId": {
             "type": "string",
             "description": "eMI3 standard EVSE ID",
-            "example": "DE*123*E12345*A"
+            "example": "IN*123*E12345*A"
           },
           "identity": {
             "type": "string",
@@ -1519,7 +1426,7 @@
           "evseId": {
             "type": "string",
             "description": "EMI3 ID of a Connector",
-            "example": "SE*CND*E123ABC*1"
+            "example": "IN*CND*E123ABC*1"
           },
           "price": {
             "$ref": "#/components/schemas/Price"
@@ -1649,7 +1556,7 @@
           },
           "evseId": {
             "type": "string",
-            "description": "eMI3 standard EVSE ID, eg DE*123*E12345*A"
+            "description": "eMI3 standard EVSE ID, eg IN*123*E12345*A"
           },
           "identity": {
             "type": "string",
@@ -1684,9 +1591,11 @@
           "connectors",
           "description",
           "geoLocation",
-          "locationId",
+          "preELoc",
           "name",
-          "stationId"
+          "eLoc",
+          "status",
+          "lastUpdated"
         ],
         "type": "object",
         "properties": {
@@ -1705,18 +1614,34 @@
           "geoLocation": {
             "$ref": "#/components/schemas/GeoLocation"
           },
-          "locationId": {
+          "preELoc": {
             "type": "string",
-            "description": "Id of the location (previously site) where the charging station is located"
+            "description": "eLoc of the location (previously site) where the charging station was located"
           },
           "name": {
             "type": "string",
             "description": "Name of charging station",
             "example": "Asset 1"
           },
-          "stationId": {
+          "eLoc": {
             "type": "string",
             "description": "Charging station identifier"
+          },
+          "status": {
+            "type": "string",
+            "description": "The status of this Charging Station",
+            "example": "ONLINE",
+            "enum": [
+              "ONLINE",
+              "OFFLINE",
+              "UNKNOWN",
+              "NOT_ACCESSIBLE",
+              "DOES_NOT_EXIST"
+            ]
+          },
+          "lastUpdated": {
+            "type": "string",
+            "description": "Last time the system updated status on this Charging Station"
           }
         },
         "description": "Static data for a charging station."
