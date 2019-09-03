@@ -15,12 +15,6 @@
       "url": "https://github.com/MapmyIndia/mapmyindia-geoanalytics-api-web/blob/master/LICENSE"
     }
   },
-  "servers": [
-    {
-      "url": "//am.mapmyindia.in/",
-      "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
-    }
-  ],
   "tags": [
     {
       "name": "session",
@@ -46,7 +40,7 @@
           "integrator-api"
         ],
         "summary": "Receive a Charge Detail Record after a session has completed.",
-        "description": "<p>Charge and Drive posts a Charge Detail Record (CDR) after the conclusion of a charging session.</p><p>Note that the CDR may contain a price for the session. This price is informative only, and is based on the end-user price set within Charge and Drive for the connector used in the session.</p> <p>You need to implement this endpoint if you want to receive records of charging sessions.</p>",
+        "description": "<p>MapmyIndia EV Platform posts a Charge Detail Record (CDR) after the conclusion of a charging session.</p><p>Note that the CDR may contain a price for the session. This price is informative only, and is based on the end-user price set within MapmyIndia EV Plaform for the connector used in the session.</p>  <p>You need to implement this endpoint if you want to\n  receive records of charging sessions.</p>",
         "operationId": "postCdrUsingPOST",
         "requestBody": {
           "description": "chargeDetailRecord",
@@ -73,7 +67,13 @@
             ]
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/charging-sessions": {
       "get": {
@@ -204,7 +204,13 @@
             "apiKey": []
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/charging-sessions/{session-id}": {
       "get": {
@@ -341,7 +347,13 @@
             "apiKey": []
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/charging-sessions/{session-id}/status": {
       "get": {
@@ -389,7 +401,13 @@
             "apiKey": []
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/charging-stations": {
       "post": {
@@ -397,7 +415,7 @@
           "integrator-api"
         ],
         "summary": "Receive a charging station upon creation.",
-        "description": "<p>Charge and Drive posts a charging station after a charging station is created.</p><p>You need to implement this endpoint if you want to receive static data of charging stations.</p>",
+        "description": "<p>MapmyIndia EV Platform posts a charging station after a charging station is created.</p> <p>You need to implement this endpoint if you want to receive data of charging stations.</p>",
         "operationId": "postChargingStationOnCreationUsingPOST",
         "requestBody": {
           "description": "chargingStation",
@@ -424,7 +442,13 @@
             ]
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/places/plugs/{evse-id}": {
       "get": {
@@ -488,7 +512,13 @@
             "apiKey": []
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/places/{eLoc}": {
       "get": {
@@ -558,7 +588,7 @@
           "integrator-api"
         ],
         "summary": "Receive a charging station upon update.",
-        "description": "<p>Charge and Drive sends a charging station after a charging station is updated.</p><p>You need to implement this endpoint if you want to receive static data of charging stations update.</p>",
+        "description": "<p>MapmyIndia EV Platform sends a charging station after a charging station is updated.</p> <p>You need to implement this endpoint if you want to receive static data of charging stations update.</p>",
         "operationId": "putChargingStationOnUpdateUsingPUT",
         "parameters": [
           {
@@ -602,7 +632,7 @@
           "integrator-api"
         ],
         "summary": "Receive a notification upon charging station deletion.",
-        "description": "<p>Charge and Drive sends a DELETE request after a charging station is removed.</p><p>You need to implement this endpoint if you want to receive notification on charging station deletion.</p>",
+        "description": "<p>MapmyIndia EV Platform sends a DELETE request after a charging station is removed.</p> <p>You need to implement this endpoint if you want to receive notification on charging station deletion.</p>",
         "operationId": "deleteChargingStationUsingDELETE",
         "parameters": [
           {
@@ -629,15 +659,21 @@
             ]
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
-    "/v1/connectors/{evse-id}": {
+    "/v1/plugs/{evse-id}": {
       "post": {
         "tags": [
           "integrator-api"
         ],
         "summary": "Receive an availability status update of a connector.",
-        "description": "<p>Charge and Drive posts a dynamic data update when the availability status of a connector changes, e.g., from AVAILABLE to OCCUPIED.</P><p>You need to implement this endpoint if you want to receive dynamic data of connectors.</p>",
+        "description": "<p>MapmyIndia EV Platform posts a dynamic data update when the availability status of a connector changes, e.g., from AVAILABLE to OCCUPIED.</p> <p>You need to implement this endpoint if you want to receive dynamic data of connectors.</p>",
         "operationId": "postConnectorStatusUsingPOST",
         "parameters": [
           {
@@ -675,7 +711,13 @@
             ]
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/session-events": {
       "post": {
@@ -683,7 +725,7 @@
           "integrator-api"
         ],
         "summary": "Receive a notification when a session has updated.",
-        "description": "<p>Charge and Drive posts to this endpoint to notify you of session events, i.e. when a charging session starts, stops, or fails. This applies to both local and remote charging scenarios.</p><p>You need to implement this endpoint if you want to be notified when sessions start and stop.</p> ",
+        "description": "<p>MapmyIndia EV Platform posts to this endpoint to notify you of session events, i.e. when a charging session starts, stops, or fails. This applies to both local and remote charging scenarios.</p> <p>You need to implement this endpoint if you want to be notified when sessions start and stop.</p> ",
         "operationId": "notifySessionEventUsingPOST",
         "requestBody": {
           "description": "event",
@@ -716,7 +758,13 @@
             ]
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
     },
     "/v1/verify-user-key/{user-key}": {
       "post": {
@@ -724,7 +772,7 @@
           "integrator-api"
         ],
         "summary": "Verify user key",
-        "description": "<p>Used in the local start scenario.</p><br><p>The end-user comes to a charging station and identifies themselves towards the charging station using a key, e.g. by RFID tag. Charge and Drive will send a request to you to identify the user. The user key we send here is as reported by the charging station hardware, for example, RFID tags are usually reported as a hexadecimal string.</p><br><p>The operation optionally accepts payload from the calling party. For example, a valid JSON object like <code>{\"payload\":{\"evseId\":\"evseIdValue\"}}</code> can be the payload.</p><br><p>Your service should respond to this endpoint with an identity representing the user. When we send you the Charge Detail Record for the session, the session belongs to this identity. </p><br><p>You need to implement this endpoint if you want to support local starts. </p>",
+        "description": "<p>Used in the local start scenario.</p> <p>The end-user comes to a charging station and identifies themselves towards the charging station using a key, e.g. by RFID tag. MapmyIndia EV Platform will send a request to you to identify the user. The user key we send here is as reported by the charging station hardware, for example, RFID tags are usually reported as a hexadecimal string.</p> <p>The operation optionally  accepts payload from the calling party. For example, a valid JSON object   like <code>{\"payload\":{\"evseId\":\"evseIdValue\"}}</code> can be the payload.</p> <p>Your service should respond to this endpoint with an identity representing the user. When we send you the Charge Detail Record for the session, the session belongs to this identity. </p> <p>You need to implement this endpoint if you want to support local starts.</p>",
         "operationId": "verifyUserKeyUsingPOST",
         "parameters": [
           {
@@ -776,7 +824,175 @@
             ]
           }
         ]
-      }
+      },
+      "servers": [
+        {
+          "url": "//am.mapmyindia.in/",
+          "description": "MapmyIndia EV API UAT Server for Development & Evaluation"
+        }
+      ]
+    },
+    "/{version}/places/search/json": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Autosuggest search API for searching a charging station",
+        "description": "For detailed documentation visit <a href=\"https://www.mapmyindia.com/api/advanced-maps/doc/autosuggest-api\">Autosuggest Documentation</a> on MapmyIndia API website.",
+        "operationId": "searchChargingStationUsingAutosuggest",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The Search Query for searching EV Charging Stations",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "The version of the autosuggest API to be used for searching EV Charging stations.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "description": "The location around which the nearby API will use for searching EV Charging stations.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false
+      },
+      "servers": [
+        {
+          "url": "//atlasweb.mapmyindia.in/api/",
+          "description": "MapmyIndia EV Search APIs for Development & Evaluation "
+        }
+      ]
+    },
+    "/{version}/places/nearby/json": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Nearby search API for searching a charging station nearby.",
+        "description": "For detailed documentation visit <a href=\"https://www.mapmyindia.com/api/advanced-maps/doc/nearby-api\">Nearby Documentation</a> on MapmyIndia API website.",
+        "operationId": "searchChargingStationUsingNearby",
+        "parameters": [
+          {
+            "name": "keywords",
+            "in": "query",
+            "description": "The category (or keyword) for searching nearby EV Charging Stations",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "The version of the nearby API to be used for searching EV Charging stations.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "refLocation",
+            "in": "query",
+            "description": "The location around which the nearby API will use for searching EV Charging stations.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false
+      },
+      "servers": [
+        {
+          "url": "//atlasweb.mapmyindia.in/api/",
+          "description": "MapmyIndia EV Search APIs for Development & Evaluation "
+        }
+      ]
+    },
+    "/{version}/places/textsearch/json": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "TextSearch  API for searching a charging station.",
+        "description": "For detailed documentation visit <a href=\"https://github.com/kunalbharti/mapmyindia-rest-api-beta/tree/master/mapmyindia-textsearch-api\">TextSearch Documentation</a> on Github.",
+        "operationId": "searchChargingStationUsingTextSearch",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The query string used for searching EV Charging Stations",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "The version of the textsearch API to be used for searching EV Charging stations.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "description": "The location around which the nearby API will use for searching EV Charging stations.",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "deprecated": false
+      },
+      "servers": [
+        {
+          "url": "//atlasweb.mapmyindia.in/api/",
+          "description": "MapmyIndia EV Search APIs for Development & Evaluation "
+        }
+      ]
     }
   },
   "components": {
@@ -1062,7 +1278,7 @@
           "currency": {
             "type": "string",
             "description": "Currency in ISO4217 format",
-            "example": "EUR"
+            "example": "INR"
           },
           "energyCost": {
             "type": "number",
@@ -1086,7 +1302,7 @@
           },
           "totalCost": {
             "type": "number",
-            "description": "The total cost, in the major currency unit (e.g. for EUR, \"10.23\" indicates 10 euros and 23 cents).",
+            "description": "The total cost, in the major currency unit (e.g. for INR, \"10.23\" indicates 10 rupees and 23 paise).",
             "example": 10.23
           }
         },
@@ -1176,12 +1392,12 @@
           "currency": {
             "type": "string",
             "description": "currency used in the profile. In ISO4217 format",
-            "example": "EUR"
+            "example": "INR"
           },
           "description": {
             "type": "string",
             "description": "compacted description of the pricing rules",
-            "example": "2 SEK / min, weekdays"
+            "example": "5 INR / min, weekdays"
           },
           "profileId": {
             "type": "string",
@@ -1220,7 +1436,7 @@
       "Identity": {
         "title": "Identity",
         "required": [
-          "empId",
+          "emspId",
           "id",
           "idType"
         ],
@@ -1228,12 +1444,12 @@
         "properties": {
           "empId": {
             "type": "string",
-            "description": "This is the ID of the EMP who acknowledges the identity of an end user.",
-            "example": "SE*EMP"
+            "description": "This is the ID of the eMSP who acknowledges the identity of an end user.",
+            "example": "IN*eMSP"
           },
           "id": {
             "type": "string",
-            "description": "This is your identifier for a user who is interacting with Charge and Drive. This identifier is used by Charge and Drive for identifying the user who is involved with a charging session. No personally identifying information should be used in this identity.",
+            "description": "This is your identifier for a user who is interacting with MapmyIndia EV Platform. This identifier is used by MapmyIndia EV Platform for identifying the user who is involved with a charging session. No personally identifying information should be used in this identity.",
             "example": "5402394354563544\", \"83243f61-fa63-4166-846e-39b11b7051b0\", \"{\"type\":\"rfid\",\"id\":\"fa7ae01bbebc\"}"
           },
           "idType": {
@@ -1366,7 +1582,7 @@
         "properties": {
           "chargingCost": {
             "type": "number",
-            "description": "Total cost of the charging session, in the major currency unit (e.g. for EUR, \"10.23\" indicates 10 euros and 23 cents). Note that this cost is the cost that Charge and Drive has calculated based on its internal, user-based, pricing model. It does not necessarily reflect the price that may be charged to a separate EMP, which price may be affected by a separate agreement.",
+            "description": "Total cost of the charging session, in the major currency unit (e.g. for INR, \"10.23\" indicates 10 Rupees and 23 paise). Note that this cost is the cost that MapmyIndia EV platform has calculated based on its internal, user-based, pricing model. It does not necessarily reflect the price that may be charged to a separate eMSP, which price may be affected by a separate agreement.",
             "example": 10.23
           },
           "chargingPeriods": {
@@ -1388,7 +1604,7 @@
           "currency": {
             "type": "string",
             "description": "currency in ISO4217 format",
-            "example": "EUR"
+            "example": "INR"
           },
           "energyConsumed": {
             "type": "integer",
@@ -1402,7 +1618,7 @@
           },
           "identity": {
             "type": "string",
-            "description": "The identity of the user receiving the charging session, provided by you."
+            "description": "The identity of the user receiving the charging session, provided by  you."
           },
           "sessionId": {
             "type": "string",
@@ -1567,7 +1783,7 @@
           },
           "sessionId": {
             "type": "string",
-            "description": "The Charge and Drive id for the session"
+            "description": "The MapmyIndia EV Platform's id for the session"
           },
           "sourceType": {
             "type": "string",
@@ -1686,7 +1902,7 @@
           "currency": {
             "type": "string",
             "description": "currency in ISO4217 format",
-            "example": "EUR"
+            "example": "INR"
           },
           "unit": {
             "type": "string",
@@ -1800,9 +2016,8 @@
           }
         },
         "description": "Status of a Charging Station including it's connector's statuses"
-      }
-    },
-    "securitySchemes": {
+      },
+      "securitySchemes": null,
       "apiKey": {
         "type": "apiKey",
         "name": "x-api-key",
