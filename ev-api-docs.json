@@ -17,20 +17,20 @@
   },
   "tags": [
     {
-      "name": "session",
-      "description": "API provided by MapmyIndia EV Platform for remotely starting and stopping sessions and fetching Charge Detail Records."
+      "name": "search",
+      "description": "API to search for charging station & get basic details about stations and connectors(plug) from MapmyIndia EV Platform"
     },
     {
       "name": "station",
       "description": "API to fetch charging station & connector(plug) information from MapmyIndia EV Platform"
     },
     {
-      "name": "integrator-api",
-      "description": "API implemented by you, the integration partner. MapmyIndia EV Platform will use this API to send events, Charge Detail Records, and identification requests to your registered & authorized service."
+      "name": "session",
+      "description": "API provided by MapmyIndia EV Platform for remotely starting and stopping sessions and fetching Charge Detail Records."
     },
     {
-      "name": "search",
-      "description": "API to search for charging station & get basic details about stations and connectors(plug) from MapmyIndia EV Platform"
+      "name": "integrator-api",
+      "description": "API implemented by you, the integration partner. MapmyIndia EV Platform will use this API to send events, Charge Detail Records, and identification requests to your registered & authorized service."
     }
   ],
   "paths": {
@@ -125,7 +125,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PageResonse«ChargeDetailRecord»"
+                  "$ref": "#/components/schemas/PageResonseChargeDetailRecord"
                 }
               }
             }
@@ -1308,8 +1308,8 @@
         },
         "description": "A cost, broken down into components for different services."
       },
-      "PageResonse«ChargeDetailRecord»": {
-        "title": "PageResonse«ChargeDetailRecord»",
+      "PageResonseChargeDetailRecord": {
+        "title": "PageResonseChargeDetailRecord",
         "required": [
           "content",
           "fromCursor"
@@ -2016,12 +2016,19 @@
           }
         },
         "description": "Status of a Charging Station including it's connector's statuses"
-      },
-      "securitySchemes": null,
-      "apiKey": {
-        "type": "apiKey",
-        "name": "x-api-key",
-        "in": "header"
+      }
+    },
+    "securitySchemes": {
+      "mmi_auth": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://outpost.mapmyindia.com/api/security/oauth/token",
+            "scopes": {
+              "READ": "read authorization for APIs"
+            }
+          }
+        }
       }
     }
   }
