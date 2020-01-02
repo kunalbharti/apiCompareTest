@@ -1,0 +1,708 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Custom APIs for Honda Connect",
+    "description": "<p><h3>Custom APIs for powering Honda Connect Alexa Skill.</h3></p> <p> The underlying APIs will be used by the Alexa Skill being developed for providing location information from MapmyIndia API servers to Alexa cloud on request</p>\n<p>Please note that these API are undergoing development and aspects of it may change, though we will try to work with integrating partners in order to minimise any disruption caused by such changes, and maintain backwards compatibility. The documentation presented here in particular is transient and dynamic.\n<h2>Important notes</h2><ul>  <li>URLs: the urls to use for UAT and Prod are: <code>https://atlasweb.mapmyindia.in</code> and <code>https://atlas.mapmyindia.com</code></li>  <li>Authentication:     <ul>      <li>To call our API, authorization is required through an access token provided in request header <code>Authorization</code>. For example <code>Authorization: 'bearer your_access_token'</code> </li>      <li>For certain APIs, if the endpoint requires API key authorization, then the API key is provided in request URL within path <code>{api-key}</code>. <li>For any issues or questions please submit it to the support : <a href=\"mailto:apisupport@mapmyindia.com\" target=\"_blank\">API Support</a>, if you haven't got access to the support portal contact your service account manager with any questions</li></ul>\nExample request:<br><code> curl -X GET \\ <br>'https://atlas.mapmyindia.com/api/places/nearby/json?keywords=TRNPMP&refLocation=28.550592,77.268770&page=1&sortBy=dist:asc&radius=10000&region=IND' \\ <br>-H 'Authorization: bearer xxxx-xxxxxx-xxxxxx-xxxxxx-xxxxxx' \\ </code><p></p>",
+    "contact": {
+      "name": "MapmyIndia API Support",
+      "url": "https://www.mapmyindia.com/api/#f_cont",
+      "email": "apisupport@mapmyindia.com"
+    },
+    "termsOfService": "https://www.mapmyindia.com/api/terms-&-conditions",
+    "version": "V1.0.0",
+    "license": {
+      "name": "Revised BSD-3 Clause",
+      "url": "https://github.com/MapmyIndia/mapmyindia-geoanalytics-api-web/blob/master/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "Custom",
+      "description": "APIs from MapmyIndia to communicate with Alexa Cloud and provide Alexa with necesary location information about the user or his query.  "
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://atlasweb.mapmyindia.in/api",
+      "description": "Atlas UAT server"
+    },
+    {
+      "url": "https://atlas.mapmyindia.com/api",
+      "description": "Atlas Production server"
+    }
+  ],
+  "paths": {
+    "/{version}/places/getAddress/json": {
+      "get": {
+        "tags": [
+          "Custom"
+        ],
+        "summary": "A variant of rev geocode API that returns the address.",
+        "description": "A variant of rev geocode API that returns the address, structured as well as formatted, of the location specified along with distance of the location from the provided PINs geometric centroid.",
+        "operationId": "getAddressDistanceUsingRevGeocode",
+        "parameters": [
+          {
+            "name": "pin",
+            "in": "query",
+            "description": "The PIN code from which aerial distance needs to be given from the provided location.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "The version of the getAddress API to be used for searching address of the location.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "The latitude around which the getAddress API will use for searching address.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "description": "The longitude around which the getAddress API will use for searching address.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "The region around which the getAddress API will use for searching address that can be india, nepal, sri lanka, bhutan, bangladesh, myanmmar respectively. Default is india.",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAddressResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Not found"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "API access denied"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Something went wrong"
+          },
+          "503": {
+            "description": "Internal server error"
+          }
+        },
+        "deprecated": false
+      },
+      "servers": [
+        {
+          "url": "https://atlasweb.mapmyindia.in/api",
+          "description": "Atlas UAT Server"
+        },
+        {
+          "url": "https://atlas.mapmyindia.com/api",
+          "description": "Atlas Production Server"
+        }
+      ]
+    },
+    "/{version}/places/nearby/json": {
+      "get": {
+        "tags": [
+          "Custom"
+        ],
+        "summary": "A variant of nearby API that returns the nearest fuel stations & dealers.",
+        "description": "A variant of nearby API that returns the nearest fuel stations & dealers according to the category code passed in the API, along with distance of the POI from the provided PINs geometric centroid.",
+        "operationId": "searchFuelStationsNDealersUsingNearby",
+        "parameters": [
+          {
+            "name": "keywords",
+            "in": "query",
+            "description": "The parameter used to take in the category code(s) for the fuel stations, Service Stations & Dealers. The category codes will be TRNPMP, HNDREP, HNDAUT.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "description": "The version of the nearby API to be used for searching address of the location.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pin",
+            "in": "query",
+            "description": "The PIN code from which aerial distance needs to be given from the provided location.",
+            "allowEmptyValue": false,
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "refLocation",
+            "in": "query",
+            "description": "The location around which the Nearby API will use for searching fuel stations, service centres & dealers.",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Provides number of the page to provide results from.",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorts data in order specified from the passed location.",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "description": "Provides the range of distance to search over (default: 1000, min: 500, max: 10000).",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "bounds",
+            "in": "query",
+            "description": "Allows the developer to send in map bounds to provide a nearby search within the geobounds. Northwest to Southeast position coordinates are required to be passed.",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "description": "It takes in the country code. LKA, IND, BTN, BGD, NPL, MMR for Sri-Lanka, India, Bhutan, Bangladesh, Nepal, Myanmar respectively. Default is India (IND).",
+            "allowEmptyValue": false,
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/nearbyResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Not found"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "API access denied"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Something went wrong"
+          },
+          "503": {
+            "description": "Internal server error"
+          }
+        },
+        "deprecated": false
+      },
+      "servers": [
+        {
+          "url": "https://atlasweb.mapmyindia.in/api",
+          "description": "Atlas UAT Server"
+        },
+        {
+          "url": "https://atlas.mapmyindia.com/api",
+          "description": "Atlas Production Server"
+        }
+      ]
+    }
+  },
+  "security": [
+    {
+      "bearerToken": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "revGeoResults": {
+        "title": "revGeoResults",
+        "description": "The results object which contains the structured address output as well as formatted address of the input coordinates.",
+        "required": [
+          "houseNumber",
+          "houseName",
+          "poi",
+          "poi_dist",
+          "street",
+          "street_dist",
+          "subSubLocality",
+          "subLocality",
+          "locality",
+          "village",
+          "district",
+          "subDistrict",
+          "city",
+          "state",
+          "pincode",
+          "lat",
+          "lng",
+          "area",
+          "formatted_address"
+        ],
+        "type": "object",
+        "properties": {
+          "houseNumber": {
+            "type": "string",
+            "description": "house number of the reverse geocoded address",
+            "format": "string",
+            "example": "68"
+          },
+          "houseName": {
+            "type": "string",
+            "description": "house name of the reverse geocoded address",
+            "format": "string",
+            "example": "Statesman House"
+          },
+          "poi": {
+            "type": "string",
+            "description": "poi reference of the reverse geocoded address",
+            "format": "string",
+            "example": "Unicommerce e Solutions Pvt Ltd"
+          },
+          "poi_dist": {
+            "type": "string",
+            "description": "reference poi distance from the reverse geocoded address",
+            "format": "string, meters",
+            "example": "8"
+          },
+          "street": {
+            "type": "string",
+            "description": "reference street of the reverse geocoded address",
+            "format": "string",
+            "example": "Dr. Jha Marg"
+          },
+          "street_dist": {
+            "type": "string",
+            "description": "reference street distance from the reverse geocoded address",
+            "format": "string, meters",
+            "example": "128"
+          },
+          "subSubLocality": {
+            "type": "string",
+            "description": "subSubLocality of the reverse geocoded address",
+            "format": "string",
+            "example": "Pocket A1"
+          },
+          "subLocality": {
+            "type": "string",
+            "description": "subLocality of the reverse geocoded address",
+            "format": "string",
+            "example": "Block D"
+          },
+          "locality": {
+            "type": "string",
+            "description": "locality of the reverse geocoded address",
+            "format": "string",
+            "example": "Okhla Industrial Estate Phase 3"
+          },
+          "village": {
+            "type": "string",
+            "description": "village of the reverse geocoded address",
+            "format": "string",
+            "example": "Hatewa"
+          },
+          "district": {
+            "type": "string",
+            "description": "district of the reverse geocoded address",
+            "format": "string",
+            "example": "South East Delhi District"
+          },
+          "subDistrict": {
+            "type": "string",
+            "description": "subDistrict of the reverse geocoded address",
+            "format": "string",
+            "example": "Kalkaji"
+          },
+          "city": {
+            "type": "string",
+            "description": "city of the reverse geocoded address",
+            "format": "string",
+            "example": "New Delhi"
+          },
+          "state": {
+            "type": "string",
+            "description": "state of the reverse geocoded address",
+            "format": "string",
+            "example": "Delhi"
+          },
+          "pincode": {
+            "type": "string",
+            "description": "pincode of the reverse geocoded address",
+            "format": "string",
+            "example": "110020"
+          },
+          "lat": {
+            "type": "string",
+            "description": "lat of the reverse geocoded address",
+            "format": "string",
+            "example": "28.5495"
+          },
+          "lng": {
+            "type": "string",
+            "description": "lng of the reverse geocoded address",
+            "format": "string",
+            "example": "77.2679"
+          },
+          "area": {
+            "type": "string",
+            "description": "area of the reverse geocoded address",
+            "format": "string",
+            "example": "India"
+          },
+          "formatted_address": {
+            "type": "string",
+            "description": "formatted address of the reverse geocoded address",
+            "format": "string",
+            "example": "68, Unnamed Road, Okhla Industrial Estate Phase 3, New Delhi, Delhi. 8 m from Unicommerce e Solutions Pvt Ltd pin-110020 (India)"
+          }
+        }
+      },
+      "getAddressResponse": {
+        "title": "getAddressResponse",
+        "description": "The results object which contains the structured address output as well as formatted address of the input coordinates.",
+        "required": [
+          "responseCode",
+          "version",
+          "results",
+          "distanceFromPin"
+        ],
+        "type": "object",
+        "properties": {
+          "responseCode": {
+            "type": "number",
+            "description": "The response code generated by the application to indicate a successful or unsuccessful processing of input request. This is different from standard HTTP error codes which are sent in the header.",
+            "format": "integer",
+            "example": 200
+          },
+          "version": {
+            "type": "string",
+            "description": "The version of the API running at the moment; data and application version are both indicated and the unique referencing can be parsed by MMI internal tools only",
+            "format": "string",
+            "example": "211.19"
+          },
+          "distanceFromPin": {
+            "type": "string",
+            "description": "The distance of the input coordinates from the geometric centre of the input PIN code",
+            "format": "string, meters",
+            "example": "1729"
+          },
+          "results": {
+            "type": "array",
+            "description": "The results object which contains the structured address output as well as formatted address of the input coordinates.",
+            "items": {
+              "$ref": "#/components/schemas/revGeoResults"
+            }
+          }
+        }
+      },
+      "nearbyResponse": {
+        "title": "nearbyResponse",
+        "description": "The results object which contains the output of custom Nearby API.",
+        "required": [
+          "suggestedLocations",
+          "pageInfo"
+        ],
+        "type": "object",
+        "properties": {
+          "suggestedLocations": {
+            "type": "array",
+            "description": "The array of result objects, each of which contain the individual results as per the search category and other parameters.",
+            "items": {
+              "$ref": "#/components/schemas/suggestedLocations"
+            }
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/pageInfo"
+          }
+        }
+      },
+      "pageInfo": {
+        "title": "pageInfo",
+        "description": "The page information for the searched query.",
+        "required": [
+          "pageCount",
+          "totalHits",
+          "totalPages",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "pageCount": {
+            "type": "number",
+            "description": "The current page served in the response of the search query.",
+            "format": "integer",
+            "example": 1
+          },
+          "totalHits": {
+            "type": "number",
+            "description": "The total number of POI results found acc, to the input query.",
+            "format": "integer",
+            "example": 38
+          },
+          "totalPages": {
+            "type": "number",
+            "description": "The total number of pages of results available for the searched query.",
+            "format": "integer",
+            "example": 4
+          },
+          "pageSize": {
+            "type": "number",
+            "description": "The maximum number of POIs contained in a single page of results.",
+            "format": "integer",
+            "example": 200
+          }
+        }
+      },
+      "suggestedLocations": {
+        "title": "suggestedLocations",
+        "description": "The object containing the information of the search result",
+        "required": [
+          "placeName",
+          "placeAddress",
+          "latitude",
+          "longitude",
+          "orderIndex"
+        ],
+        "type": "object",
+        "properties": {
+          "richInfo": {
+            "$ref": "#/components/schemas/richInfo"
+          },
+          "keywords": {
+            "type": "array",
+            "description": "The keywords/category codes associated with the given result.",
+            "items": {
+              "type": "string"
+            },
+            "format": "array of strings",
+            "example": "TRNPMP"
+          },
+          "distance": {
+            "type": "number",
+            "description": "The distance of the result from the reference location.",
+            "format": "integer",
+            "example": 691
+          },
+          "distanceFromPin": {
+            "type": "string",
+            "description": "The distance of the result POI from the geometric centre of the input PIN code",
+            "format": "string, meters",
+            "example": "1729"
+          },
+          "placeName": {
+            "type": "string",
+            "description": "The name of the POI.",
+            "format": "string",
+            "example": "HP Petrol Pump"
+          },
+          "placeAddress": {
+            "type": "string",
+            "description": "Formatted address of the POI.",
+            "format": "string",
+            "example": "Near Kalka Ji, Maa Anandmai Marg, Okhla Industrila Area, New Delhi, Delhi, 110020"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the POI.",
+            "format": "double",
+            "example": 28.545842
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the POI.",
+            "format": "double",
+            "example": 77.264195
+          },
+          "orderIndex": {
+            "type": "number",
+            "description": "The order of the POI in the array of POI results.",
+            "format": "integer",
+            "example": 1
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the resulting geographical type.",
+            "format": "string",
+            "example": "POI"
+          },
+          "entryLatitude": {
+            "type": "number",
+            "description": "The entry point latitude of the POI.",
+            "format": "double",
+            "example": 28.545842
+          },
+          "entryLongitude": {
+            "type": "number",
+            "description": "The entry point longitude of the POI.",
+            "format": "double",
+            "example": 77.264195
+          },
+          "email": {
+            "type": "string",
+            "description": "The email ID associated with the POI.",
+            "format": "string",
+            "example": "abc@xyz.in"
+          },
+          "eLoc": {
+            "type": "string",
+            "description": "unique 6 digit ID allocated to the POI from Mapmyindia.",
+            "format": "string",
+            "example": "KSNRVU"
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "category codes associated with the given result.",
+            "format": "string",
+            "example": "HNDREP"
+          },
+          "city": {
+            "type": "string",
+            "description": "City of the POI result.",
+            "format": "string",
+            "example": "New Delhi"
+          },
+          "state": {
+            "type": "string",
+            "description": "State of the POI result.",
+            "format": "string",
+            "example": "Delhi"
+          },
+          "pincode": {
+            "type": "string",
+            "description": "PIN code of the POI result.",
+            "format": "string",
+            "example": "110020"
+          }
+        }
+      },
+      "richInfo": {
+        "title": "richInfo",
+        "description": "The object containing the rich information of the search result",
+        "required": [
+          "Merchant_Id",
+          "Dealer_Ph_Num",
+          "Merchant_Key",
+          "dealertype",
+          "iWS_",
+          "Dealer_Code"
+        ],
+        "properties": {
+          "Merchant_Id": {
+            "type": "string",
+            "description": "The merchant ID of the dealer or service centre POI",
+            "format": "string",
+            "example": "1"
+          },
+          "Dealer_Ph_Num": {
+            "type": "string",
+            "description": "The phone number of the dealer or service centre.",
+            "format": "string",
+            "example": "911140710052"
+          },
+          "Merchant_Key": {
+            "type": "string",
+            "description": "The unique key assigned to a dealer or service centre POI.",
+            "format": "string",
+            "example": 4
+          },
+          "dealertype": {
+            "type": "string",
+            "description": "The type of dealer/service centre.",
+            "format": "string",
+            "example": "2S"
+          },
+          "iWS_": {
+            "type": "string",
+            "description": "Field for use internally.",
+            "format": "string",
+            "example": "N"
+          },
+          "Dealer_Code": {
+            "type": "string",
+            "description": "The unique place ID assigned to the dealer/service centre.",
+            "format": "string",
+            "example": "DD052B"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "bearer"
+      }
+    }
+  }
+}
