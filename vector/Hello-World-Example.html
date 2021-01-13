@@ -1,28 +1,32 @@
 <html>
-    <head>
+<head>
     <title>MapmyIndia Plugin - getEloc Plugin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="desciption" content="Mapmyindia getEloc Plugin">
-    <script src="https://apis.mapmyindia.com/advancedmaps/v1/adc1120d-cd71-4e6f-a849-0d1b4d5f1ca5/map_load?v=1.5"></script>
-    <script src="https://apis.mapmyindia.com/advancedmaps/api/adc1120d-cd71-4e6f-a849-0d1b4d5f1ca5/map_sdk_plugins"></script>
-    <link rel="icon" href="http://www.mapmyindia.com/images/favicon.ico" type="image/x-icon">
-        <style>
-            #map{
-                width: 100%; height: 60vh;
+    <script
+        src="https://apis.mapmyindia.com/advancedmaps/v1/adc1120d-cd71-4e6f-a849-0d1b4d5f1ca5/map_load?v=1.5"></script>
+    <script
+        src="https://apis.mapmyindia.com/advancedmaps/api/adc1120d-cd71-4e6f-a849-0d1b4d5f1ca5/map_sdk_plugins"></script>
+    <link rel="icon" href="https://www.mapmyindia.com/images/favicon.ico" type="image/x-icon">
+    <style>
+        #map {
+            width: 100%;
+            height: 60vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+    /*Map Initialization*/
+        var map = new MapmyIndia.Map('map', { center: [28.09, 78.3], zoom: 5, search: false, zoomControl: true, location: false, fullscreen: true, traffic: false, scrollWheelZoom: false });
+    /*getEloc plugin initialization*/
+        this.mk = MapmyIndia.getEloc({ map: map, eloc: '3F45CB', callback: elocData }); 
+        function elocData(data) 
+            { 
+                console.log(data); 
             }
-        </style>
-    </head>
-    <body>
-        <div id="map"></div>
-        <script>
-            /*Map Initialization*/
-            var map = new MapmyIndia.Map('map', {center: [28.09, 78.3], zoom: 5, search: false, zoomControl: true, location: false, fullscreen: true, traffic: false,scrollWheelZoom:false});
-            /*getEloc plugin initialization*/
-            var elc = MapmyIndia.getEloc({map: map, eloc: '3F45CB',callback: elocData});
-            function elocData(data) {
-                    console.log(data);
-            elc.fitbounds(); 
-            }     
-        </script>
-    </body>
+    </script>
+</body>
 </html>
