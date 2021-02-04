@@ -18,8 +18,7 @@
             directionsRenderer.setMap(map);
 
             const onChangeHandler = function () {
-                alert(directionsService);
-                //calculateAndDisplayRoute(directionsService, directionsRenderer);
+                calculateAndDisplayRoute(directionsService, directionsRenderer);
             };
             document.getElementById("start").addEventListener("change", onChangeHandler);
             document.getElementById("end").addEventListener("change", onChangeHandler);
@@ -79,7 +78,7 @@
         <b>Start Point: </b>
         <input type="text" class="textbox" id="start" value="28.610981,77.227434" placeholder="e.g:28.612960,77.229455" autocomplete="off" />
         <b>End Point: </b>
-        <input type="text" class="textbox"  id="destination" value="28.616679,77.212021" placeholder="e.g:27.157015,77.991600" autocomplete="off" />
+        <input type="text" class="textbox"  id="end" value="28.616679,77.212021" placeholder="e.g:27.157015,77.991600" autocomplete="off" />
     </div>
     <div id="map"></div>
 </body>
