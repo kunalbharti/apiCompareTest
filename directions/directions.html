@@ -13,12 +13,13 @@
             const directionsRenderer = new google.maps.DirectionsRenderer();
             const map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
-                center: { lat: 28.612969158287083, lng: 77.2305453545022 },
+                center: { lat: 28.6129, lng: 77.2305 },
             });
             directionsRenderer.setMap(map);
 
             const onChangeHandler = function () {
-                calculateAndDisplayRoute(directionsService, directionsRenderer);
+                alert(directionsService);
+                //calculateAndDisplayRoute(directionsService, directionsRenderer);
             };
             document.getElementById("start").addEventListener("change", onChangeHandler);
             document.getElementById("end").addEventListener("change", onChangeHandler);
