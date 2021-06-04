@@ -41,6 +41,9 @@
                     // scaleControl: false
                     // satellite: true
                 });
+            map.on('load',function (){
+                
+            });
 
         }
 
@@ -6024,6 +6027,7 @@
 
         // Decoding using the MapmyIndia Polyline Decoding method
         function Draw_polyline() {
+            Remove_Polyline();
             for (let i = 0; i < encoded_geometry_array.length; i++) {
 
                 //console.log(encoded_geometry_array[i]);   
@@ -6039,6 +6043,7 @@
                         fitbounds: true
                     }
                 );
+                //polyline[i].setTop();
                 allpolyline.push(polyline[i]);
 
 
@@ -6051,6 +6056,7 @@
         }
 
         function Add_Garage() {
+            Remove_Marker();
             // draw position markers
             startMarker = new MapmyIndia.Marker({
                 map: map,
@@ -6063,6 +6069,7 @@
         }
 
         function Add_Markers() {
+            Remove_Marker();
             // draw position markers
             locationMarker = new MapmyIndia.Marker({
                 map: map,
@@ -6070,20 +6077,20 @@
                 offset: [0, 10],
                 //popupHtml: 'Garage Location',
                 position: markerData,
+                cType: 1,
                 clusters: true
             });
         }
 
         // Remove polyline function 
         function Remove_Polyline() {
-            MapmyIndia.remove({ map: map, layer: polyline });
-
+            if (polyline)MapmyIndia.remove({ map: map, layer: polyline });
         }
 
         // Remove markers
         function Remove_Marker() {
-            MapmyIndia.remove({ map: map, layer: startMarker });
-            MapmyIndia.remove({ map: map, layer: locationMarker });
+            if(startMarker)MapmyIndia.remove({ map: map, layer: startMarker });
+            if(locationMarker)MapmyIndia.remove({ map: map, layer: locationMarker });
             //startMarker.removeLayer();
         }
     </script>
