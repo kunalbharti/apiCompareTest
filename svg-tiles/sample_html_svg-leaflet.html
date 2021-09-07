@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Quick Start - MapmyIndia Maps</title>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script
+        src="https://apis.mapmyindia.com/advancedmaps/v1/16c66a0b-1bb1-4a5b-a573-74ac61c83b64/map_load?v=1.5"></script>
+
+</head>
+
+<body>
+
+    <div id="map" style="width: 435 0px; height: 100vh;"></div>
+
+    <script>
+        var map = new MapmyIndia.Map("map", { center: [28.626693733975134, 77.23528511839835], zoomControl: true, hybrid: false, traffic:false, layer:false, zoom: 15 });
+        map.createPane('labels');
+        map.getPane('labels').style.zIndex = 999;
+        setTimeout(() => {
+            var raster_ZXY = new L.TileLayer('https://mgis-api.mapmyindia.com/raster_map/svgBasemap/16c66a0b-1bb1-4a5b-a573-74ac61c83b64/{z}/{x}/{y}.svg',{pane: 'labels'}).addTo(map);
+        }, 500);
+
+
+
+    </script>
+
+</body>
+
+</html>l̥
