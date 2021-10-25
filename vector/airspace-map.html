@@ -1,57 +1,35 @@
 <html>
 
-<head>    
+<head>
     <meta name="robots" content="noindex">
+    <title>MapmyIndia Maps: Airspace Layers !</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script
-        src="https://apis.mapmyindia.com/advancedmaps/v1/e611dfa54c6c4e1f15d0f565dea24699/map_load?v=1.5&plugin=geoanalytics"></script>
+        src="https://apis.mapmyindia.com/advancedmaps/api/e611dfa54c6c4e1f15d0f565dea24699/map_sdk?layer=vector&v=2.0&callback=initMap1&airspacelayers"
+        defer async"></script>
     <style>
         #map {
             height: 90vh;
             width: 100%;
         }
     </style>
-</head>
-
-<body onload="Auth_token_generate();">
-    <div id="map"></div><br>
-    <!-- <button onclick="international_boundary();">International Boundary - 25km</button>
-    <button onclick="airport_yellow_8_12();">Airport Yellow [8-12]km</button>
-    <button onclick="airport_yellow_5_8();">Airport Yellow [5-8]km</button>
-    <button onclick="airport_red();">Airport Red</button>
-    <button onclick="hide_layers();">Hide Layers</button> -->
-
-    <!-- // logic -->
-    <script>
+    <script language="javascript">
+        var map;
         var token;
-        var map = new MapmyIndia.Map('map',
-            {
-                center: [24.14, 78.28],
-                zoom: 5
-            });
-        var bnd = map.getBounds().toBBoxString();
-
-        function jsonp(url, callback) {
-            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-            const script = document.createElement('script');
-            script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
-            document.body.appendChild(script);
-            window[callbackName] = function (data) {
-                delete window[callbackName];
-                document.body.removeChild(script);
-                callback(data);
-            };
-        }
-
-        // map.on('load',function(){
-
-        // })
-
-
-
         // token generating
-        function Auth_token_generate() {
+        // function Auth_token_generate() {
+
+
+        // }
+        function initMap1() {
+            map = new MapmyIndia.Map('map', {
+                center: [24.14, 78.28],
+                zoomControl: true,
+                location: true,
+                zoom: 5,
+            });
+            // console.log('hello1');
             $.ajax({
                 data: {
                     "grant_type": "client_credentials",
@@ -70,173 +48,42 @@
                     alert('An error has occurred');
                 },
                 success: function (data) {
-                    token = data.access_token; console.log(token);
-
-
-                    // call international_boundary api
-                    var international_boundary_wms_layer;
-                    var wms_param4 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "coastal_area_india_region_25km",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    international_boundary_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param4);
-
-
-                    // call airport_yellow_8_12 api
-                    var airport_yellow_8_12_wms_layer;
-                    var wms_param3 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "airport_region_radius_8_to_12_km_yellow",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    airport_yellow_8_12_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param3);
-
-
-                    // call airport_yellow_5_8 api
-                    var airport_yellow_5_8_wms_layer;
-                    var wms_param2 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "airport_region_radius_5_to_8_km",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    airport_yellow_5_8_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param2);
-
-
-                    // //call airport_red API
-                    var airport_red_wms_layer;
-                    var wms_param1 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "airport_region_radius_0_to_5_km",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    airport_red_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param1);
-
-                    var overlayMaps = {
-                        "International Boundary - 25km": international_boundary_wms_layer,
-                        "Airport Yellow [8-12]km": airport_yellow_8_12_wms_layer,
-                        "Airport Yellow [5-8]km": airport_yellow_5_8_wms_layer,
-                        "Airport Red": airport_red_wms_layer
-                    };
-
-                    L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
-
+                    token = data.access_token;
+                    // console.log(token);
+                    MapmyIndia.airspaceLayer(
+                        {
+                            'map': map,
+                            'key': token,
+                            'position': 'bottomleft'
+                        });
+                    // console.log('hi1');
                 }
-
             });
-            // alert("hello");
+
         }
 
-        // // call autosuggest api
-        // function auto(){
-        //     jsonp('https://atlas.mapmyindia.com/api/places/search/json?query=delhi&access_token='+token, function(data) {
-        //         console.log(data);
-        //         alert(JSON.stringify(data));
-        //     });
-        // }   
+    </script>
+</head>
 
-        // // call geocoding api
-        // function geocoding(){
-        //     jsonp('https://atlas.mapmyindia.com/api/places/geocode?address=mapmyindia 237 okhla phase 3&access_token='+token, function(data) {
-        //         console.log(data);
-        //         alert(JSON.stringify(data));
-        //     });
-        // }
+<!-- <body onload="Auth_token_generate();"> -->
 
-        // setTimeout(() => {
+<body>
+    <div id="map"></div><br>
 
-        // }, 1000);
+    <script>
+        // var bnd = map.getBounds().toBBoxString();
 
-
-
-        // function international_boundary() {
-        //     if (international_boundary_wms_layer) international_boundary_wms_layer.remove();
-
-        //     international_boundary_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param4).addTo(map);
-        // }
-
-
-        // function airport_yellow_8_12() {
-        //     if (airport_yellow_8_12_wms_layer) airport_yellow_8_12_wms_layer.remove();
-
-        //     airport_yellow_8_12_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param3).addTo(map);
-        // }
-
-
-        // function airport_yellow_5_8() {
-        //     if (airport_yellow_5_8_wms_layer) airport_yellow_5_8_wms_layer.remove();
-
-        //     airport_yellow_5_8_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param2).addTo(map);
-        // }
-
-
-        // function airport_red() {
-        //     if (airport_red_wms_layer) airport_red_wms_layer.remove();
-
-        //     airport_red_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param1).addTo(map);
-        // }
-
-        // var airspace = L.layerGroup([airport_red_wms_layer, airport_yellow_5_8_wms_layer, airport_yellow_8_12_wms_layer, international_boundary_wms_layer]);
-
-
-
-
-
-
-
-    //    function hide_layers() {    
-
-    //             airport_red_wms_layer.remove();
-    //             airport_yellow_5_8_wms_layer.remove();
-    //             airport_yellow_8_12_wms_layer.remove();
-    //             international_boundary_wms_layer.remove();
-
-    //     }       
-
+        function jsonp(url, callback) {
+            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+            const script = document.createElement('script');
+            script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+            document.body.appendChild(script);
+            window[callbackName] = function (data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                callback(data);
+            };
+        }
     </script>
 </body>
 
