@@ -28,6 +28,9 @@
     <button onclick="Add_Garage()">Show Garage Marker</button>
     <button onclick="Remove_Polyline()">Remove Polyline</button>
     <button onclick="Remove_Marker()">Remove Markers</button>
+    <button onclick="MapmyIndia.setStyle('standard-hybrid')">Set Hybrid Map Mode</button>
+    <button onclick="MapmyIndia.setStyle('standard-day')">Set Street Map Mode</button>
+    
     <script>
         var map;
         var polyline;
@@ -6092,7 +6095,7 @@
             if(startMarker)MapmyIndia.remove({ map: map, layer: startMarker });
             if(locationMarker)MapmyIndia.remove({ map: map, layer: locationMarker });
             //startMarker.removeLayer();
-        }
+        }        
     </script>
 
 </body>
