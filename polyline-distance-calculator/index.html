@@ -1,0 +1,116 @@
+<html>
+
+<head>
+    <title>MapmyIndia Polyline Distance Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="desciption" content="Mapmyindia Polyline Distance Calculator">
+    <script src="https://kunalbharti.github.io/apiCompareTest/polyline-distance-calculator/src/haversine.js"></script>
+    <script src="https://kunalbharti.github.io/apiCompareTest/polyline-distance-calculator/src/polyline.js"></script>
+    <script
+        src="https://apis.mappls.com/advancedmaps/api/dced5f2c21ec4cf8bd246f92e0332e34/map_sdk?layer=vector&v=3.0&callback=initMap1"></script>
+    <style>
+        body {
+            margin: 0
+        }
+
+        #map {
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            /* z-index: -1; */
+        }
+
+        #encoded_poly_position {
+            width: 300px;
+            height: 75px;
+            position: absolute;
+            z-index: 999;
+            font-size: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            outline: none !important;
+            top: 5px;
+            border-radius: 10px;
+            margin: 4px;
+        }
+
+        #button {
+            position: absolute;
+            z-index: 999;
+            padding: 10px;
+            top: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <!-- <input type="text" id="encoded_poly_position" rows="5" name="encoded_poly_position" class="search-outer form-control as-input"
+        placeholder="Input 1e5 encoded polyline..." required="" spellcheck="false"> -->
+    <textarea name="label" id="encoded_poly_position" rows="5" class="form-control"
+        placeholder="Input 1e5 encoded polyline..."></textarea>
+    <div id='button'>
+        <button onclick="calculateLength()">Calculate Length</button>
+    </div>
+    <script>
+        var map;
+        var encoded_poly_value;
+        var pLength;
+        var sentLength;
+        var polyline;
+        /*Map Initialization*/
+        function initMap1() {
+            map = new mappls.Map('map', {
+                center: [28.09, 78.3],
+                zoom: 5
+                //style: 'sublime-grey'
+            });
+            mappls.setStyle('sublime-grey');
+            map.addListener('load', function () {
+                var optional_config = {
+                    location: [28.61, 77.23],
+                    region: "IND",
+                };
+            });
+        }
+        function decode_path(encoded, pc) {
+            if (!pc) pc = 100000; else pc = 1000000; encoded = unescape(encoded).replace(/\\\\/g, '\\');
+            var points = []; var index = 0, len = encoded.length; var lat = 0, lng = 0; while (index < len) { var b, shift = 0, result = 0; do { b = encoded.charAt(index++).charCodeAt(0) - 63; result |= (b & 31) << shift; shift += 5 } while (b >= 32); var dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1)); lat += dlat; shift = 0; result = 0; do { b = encoded.charAt(index++).charCodeAt(0) - 63; result |= (b & 31) << shift; shift += 5 } while (b >= 32); var dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1)); lng += dlng; points.push([lat / pc, lng / pc]) }; if (points[0][0] > 100) return decodePath(encoded, 1); else return points
+        };
+        function Remove_Polyline() {
+            if (polyline)
+                mappls.remove({ map: map, layer: polyline });
+        }
+        function calculateLength() {
+            Remove_Polyline();
+            encoded_poly_value = document.getElementById('encoded_poly_position').value;
+            // sentLength = ('"' + encoded_poly_value + '"');
+            pLength = length1(encoded_poly_value, "meter");
+            // var testLength = "kkolD_xfuMFAJAPALA?W?U?]?Q?WAq@?e@?WA_@?y@Am@?K@i@?[?UI?S?c@?k@AS?MA??KGQOi@g@e@c@[WQSQQMIIKIIu@u@WYMM[[[[QQEE]Y[WOMEEQTKNQVU\\A?S\\SXU\\W\\CFc@n@a@l@KNSVKJIJILDBVVZZVTVTn@n@HHh@h@l@h@PP|@z@FFd@n@FL@BHRFTHd@Hf@Hf@RnA@FNbAF\\@LDVHh@L|@Fb@Ff@TzAD^Lz@NlABHTbBDXJr@BVPjADXR`BDZRxAL~@L`APvADX@@Jv@Jv@@BHf@NfAZlB@L^`CFf@RlAVfB??TrA?BBJL~@NbA@JLr@@FLv@NdA@FTrAFb@Jj@Fb@Lr@";
+            // var hLength = length1(testLength,"meter");
+            console.log('The captured encoded polyline is: ' + encoded_poly_value);
+            // console.log('The sent encoded polyline is: ' + sentLength);
+            // console.log('The calculated encoded polyline2 distance is: ' + hLength);
+            console.log('The calculated encoded polyline distance is: ' + pLength);
+            pts1 = decode_path(encoded_poly_value.trim());
+            polyline = new mappls.Polyline(
+                {
+                    map: map,
+                    path: pts1,
+                    strokeColor: "blue",
+                    strokeOpacity: 1,
+                    strokeWeight: 4,
+                    lineGap: 0,
+                    fitbounds: true
+                }
+            );
+            // allpolyline.push(polyline);
+            setTimeout(() => {
+               alert('The polyline distance is: ' + pLength);
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
