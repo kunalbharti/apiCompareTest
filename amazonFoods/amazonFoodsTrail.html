@@ -117,15 +117,15 @@
                 coronaLink: false,
             });
             mappls.setStyle('sublime-grey');
-            map.addListener('load', function () {
-                polylineRaw = new mappls.Polyline({
-                    map: map,
-                    path: rawGeometry,
-                    strokeColor: 'blue',
-                    strokeWeight: 2,
-                    fitbounds: true,
-                });
-            })
+            // map.addListener('load', function () {
+            //     polylineRaw = new mappls.Polyline({
+            //         map: map,
+            //         path: rawGeometry,
+            //         strokeColor: 'blue',
+            //         strokeWeight: 2,
+            //         fitbounds: true,
+            //     });
+            // })
 
             map.addListener('load', function () {
                 polyline = new mappls.Polyline({
