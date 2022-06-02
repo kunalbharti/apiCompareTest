@@ -70,97 +70,41 @@
                     alert('An error has occurred');
                 },
                 success: function (data) {
-                    token = data.access_token; console.log(token);
+                    token = data.access_token; console.log(token)
 
+                    // // //call airport_red API
+                    // var airport_red_wms_layer;
+                    // var wms_param1 = {
+                    //     Authorization: "Bearer " + token,
+                    //     datasetNme: "airport_region_radius_0_to_5_km",
+                    //     height: window.innerHeight,
+                    //     width: window.innerWidth,
+                    //     bbox: map.getBounds().toBBoxString(),
+                    //     srs: "EPSG:3857",
+                    //     // styles: "",
+                    //     service: "WMS",
+                    //     request: "GetMap",
+                    //     version: "1.1.1",
+                    //     transparent: true,
+                    //     format: 'image/png',
+                    //     autoZIndex: true,
+                    //     zIndex: 99999
+                    // };
+                    // airport_red_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param1);
 
-                    // call international_boundary api
-                    var international_boundary_wms_layer;
-                    var wms_param4 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "coastal_area_india_region_25km",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    international_boundary_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param4);
-
-
-                    // call airport_yellow_8_12 api
-                    var airport_yellow_8_12_wms_layer;
-                    var wms_param3 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "airport_region_radius_8_to_12_km_yellow",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    airport_yellow_8_12_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param3);
-
-
-                    // call airport_yellow_5_8 api
-                    var airport_yellow_5_8_wms_layer;
-                    var wms_param2 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "airport_region_radius_5_to_8_km",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    airport_yellow_5_8_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param2);
-
-
-                    // //call airport_red API
-                    var airport_red_wms_layer;
-                    var wms_param1 = {
-                        Authorization: "Bearer " + token,
-                        datasetNme: "airport_region_radius_0_to_5_km",
-                        height: window.innerHeight,
-                        width: window.innerWidth,
-                        bbox: map.getBounds().toBBoxString(),
-                        srs: "EPSG:3857",
-                        // styles: "",
-                        service: "WMS",
-                        request: "GetMap",
-                        version: "1.1.1",
-                        transparent: true,
-                        format: 'image/png',
-                        autoZIndex: true,
-                        zIndex: 99999
-                    };
-                    airport_red_wms_layer = L.WMS.overlay("https://mgis-api.mapmyindia.com/getRasterCatalogueImage", wms_param1);
+                    var watermarked_slippy_layer = L.tileLayer('https://apis.mapmyindia.com/advancedmaps/v1/'+token+'/map_tile/{z}/{x}/{y}.png', 
+                        {
+                            minZoom: 4,
+                            maxZoom: 18 //,
+                            // subdomains: ['mt0','mt1','mt2','mt3','mt4','mt5'],
+                        }
+                    );
 
                     var overlayMaps = {
-                        "International Boundary - 25km": international_boundary_wms_layer,
-                        "Airport Yellow [8-12]km": airport_yellow_8_12_wms_layer,
-                        "Airport Yellow [5-8]km": airport_yellow_5_8_wms_layer,
-                        "Airport Red": airport_red_wms_layer
+                        "Watermarked Tiles": watermarked_slippy_layer,
+                        // "Airport Yellow [8-12]km": airport_yellow_8_12_wms_layer,
+                        // "Airport Yellow [5-8]km": airport_yellow_5_8_wms_layer,
+                        // "Airport Red": airport_red_wms_layer
                     };
 
                     L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
