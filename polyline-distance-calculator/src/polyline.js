@@ -14,7 +14,7 @@ const _haversineDistance = require('./haversine').haversineDistance;
  */
 function decode(polyline, precision) {
   if (typeof polyline !== 'string') throw new Error(`Input polyline is not a string, got ${polyline}`);
-  if (Number(precision) === precision && precision % 1 === 0) throw new Error(`Precision is not an Integer, got ${precision}`);
+  // if (Number(precision) === precision && precision % 1 === 0) throw new Error(`Precision is not an Integer, got ${precision}`);
 
   let index = 0;
   let lat = 0;
