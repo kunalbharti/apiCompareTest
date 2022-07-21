@@ -127,10 +127,10 @@ function encode(points) {
  *
  * @return {Float} length - unit based on options.radius unit
  */
-function length1(polyline, unit) {
+function length1(polyline, unit, precision) {
   if (typeof polyline !== 'string') throw new Error(`Input polyline is not a string, got ${polyline}`);
 
-  const decodedPolyline = decode(polyline);
+  const decodedPolyline = decode(polyline, precision);
   let distance = 0;
   for (let i = 0; i < decodedPolyline.length - 1; i++) {
     const lat = [decodedPolyline[i][0], decodedPolyline[i][1]];
