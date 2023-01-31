@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="https://apis.mappls.com/advancedmaps/api/5a261a21-e60b-4939-bbea-f4ae1fbfa825/map_sdk?layer=vector&v=3.0"></script>
+<script src="https://apis.mappls.com/advancedmaps/api/5a261a21-e60b-4939-bbea-f4ae1fbfa825/map_sdk_plugins?v=3.0&libraries=tracking"></script>
+<script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.1/intouch-sdk.js"></script>
+</head>
+ <body>
+	 <div id="mapdiv"></div>
+</body>
+	<script type="text/javascript" defer=defer>
+var intouchSdk = new IntouchSdk();
+function deviceDataCallback(data) {
+    console.log(data);
+}
+
+function updateToken() {
+    console.log("tokenUpdated");
+    intouchSdk.updateAccessToken("<Enter the oAuth Token without Bearer word>"); // While adding the token Don't use Bearer word, since it is being internally added.
+}
+	//intouchSdk.initialize(mapdiv, "205e0a4f-b421-4df2-9ac5-e2df9db6f689", updateToken); 
+intouchSdk.initialize(mapdiv, "5a261a21-e60b-4939-bbea-f4ae1fbfa825", updateToken); // For Map access token Use the Map API Rest key
+
+var deviceObj = {};
+// deviceObj.customIconUrl = "";
+deviceObj.iconType = 'car';// Allowed types are "bike", "car", "bus", "truck", "men".
+deviceObj.deviceId = 53452; // Enter the Device Id for which you want to see the Tracking. 
+deviceObj.bindPopUp = true;
+//intouchSdk.trackDevice(deviceObj, deviceDataCallback);
+
+            
+
+var  jobObj={};
+jobObj.jobId="63d7692b17c46b0f38b21bd4";
+jobObj.vehicleIconUrl='https://cdn.mapmyindia.com/Intouch/web/img/Start-marker.png'; 
+// jobObj.sourceIconUrl; 
+// jobObj.destinationIconUrl=''; 
+// jobObj.mapStyling='standard-night';
+jobObj.liveRefresh = 3; //new i/p param: takes values in seconds.
+jobObj.polylineColor='#B8860B'; 
+jobObj.polylineThickness=10; 
+jobObj.polylineType='solid'; 
+jobObj.fitBound='on route';//'no fitBound','on route','on vehcile' 
+intouchSdk.trackJob(jobObj,getJobDetails);
+
+function getJobDetails(data) {
+    console.log(data);
+}
+
+</script>
+
+</html>
+
