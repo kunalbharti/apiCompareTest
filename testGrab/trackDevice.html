@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="https://apis.mappls.com/advancedmaps/api/f32c66dd-dc4b-482c-81ab-2224903ae1e9/map_sdk?layer=vector&v=3.0"></script>
-<script src="https://apis.mappls.com/advancedmaps/api/f32c66dd-dc4b-482c-81ab-2224903ae1e9/map_sdk_plugins?v=3.0&libraries=tracking"></script>
+<script src="https://apis.mappls.com/advancedmaps/api/bc31a8f9-ce70-48dc-9a10-0330d88ef593/map_sdk?layer=vector&v=3.0"></script>
+<script src="https://apis.mappls.com/advancedmaps/api/bc31a8f9-ce70-48dc-9a10-0330d88ef593/map_sdk_plugins?v=3.0&libraries=tracking"></script>
 <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.1/intouch-sdk.js"></script>
 </head>
  <body>
@@ -18,7 +18,7 @@ function updateToken() {
     intouchSdk.updateAccessToken("<Enter the oAuth Token without Bearer word>"); // While adding the token Don't use Bearer word, since it is being internally added.
 }
 	//intouchSdk.initialize(mapdiv, "205e0a4f-b421-4df2-9ac5-e2df9db6f689", updateToken); 
-intouchSdk.initialize(mapdiv, "f32c66dd-dc4b-482c-81ab-2224903ae1e9", updateToken); // For Map access token Use the Map API Rest key
+intouchSdk.initialize(mapdiv, "bc31a8f9-ce70-48dc-9a10-0330d88ef593", updateToken); // For Map access token Use the Map API Rest key
 
 // var deviceObj = {};
 // // deviceObj.customIconUrl = "";
@@ -30,12 +30,12 @@ intouchSdk.initialize(mapdiv, "f32c66dd-dc4b-482c-81ab-2224903ae1e9", updateToke
             
 
 var  jobObj={};
-jobObj.jobId="63db99b53bd689103ef81d62";
+jobObj.jobId="63fdbe17a0bffe10adfc6407";
 jobObj.vehicleIconUrl='https://cdn.mapmyindia.com/Intouch/web/img/Start-marker.png'; 
 // jobObj.sourceIconUrl; 
 // jobObj.destinationIconUrl=''; 
 // jobObj.mapStyling='standard-night';
-jobObj.liveRefresh = 1; //new i/p param: takes values in seconds.
+jobObj.liveRefresh = 3; //new i/p param: takes values in seconds.
 jobObj.polylineColor='#B8860B'; 
 jobObj.polylineThickness=10; 
 jobObj.polylineType='solid'; 
