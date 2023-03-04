@@ -1,0 +1,1998 @@
+openapi: 3.0.1
+info:
+  title: DQV (Dataset, Query and Validate) API
+  description: >-
+    *Dataset, Query and Validate API is a unified API that will provide the
+    following functionality:* <ul><li>Fetches the entire dataset.</li>
+    <li>Fetches the results of the query applied on the single dataset.</li>
+    <li>Fetches the results of the query applied on the two datasets (CROSS
+    JOIN).</li> <li>Validates the query applied.</li><li>Order By with query applied on the dataset.</li>
+    <li>Group By with query applied on the dataset.</li> <li>Order By and Group
+    By with query applied on the dataset.</li> <li>Order By on the entire
+    dataset.</li> <li>Group By  on the entire dataset.</li> <li>Order By and
+    Group By  on the entire dataset.</li> <li>Geometric function (length and
+    area) with query on single route.</li> <li> Geometric function (length and
+    area) without query on single route.</li></ul><br><br><hr><br>![MapmyIndia
+    logo](https://www.mapmyindia.com/api/img/mapmyindia-api.png)
+
+
+    On a Mission to <b>"Make our world better through maps, location
+    technologies & IoT"</b>, MapmyIndia is continuously enabling real time
+    hyper-local information access through its map & location services. mGIS
+    APIs are a part of mGIS platform and the document describes APIs usage and
+    specifications for their integration into an application. The document
+    covers :
+
+    <ul><li>List of APIs along with use cases</ul></li> 
+
+    <ul><li>Explanation of resources and query parameters</ul></li>
+
+    <ul><li>Listing of response structure and data type</ul></li>
+
+
+    ## Important notes
+     <ul><li><b>URLs</b>: the urls to use for UAT and Production are:  <ul><li>
+     <b>Production</b>:
+    <code>https://mgis-api.mappls.com/</code></li><li> To call our API, the
+    endpoint requires access-token authorization and the
+    <code>access-token</code> needs to be entered. For example
+    <code>https://mgis-api.mappls.com/query_validation </code> <br> Pass header
+    as <code>Authorization:Bearer access_token</code>   </li> </ul> <li>For any
+    issues or questions please submit it to our support : <a
+    href="mailto:apisupport@mappls.com" target="_blank">API Support</a>.  If
+    you have some non-technical or commercial queries, contact your service
+    account manager</li></ul>
+    <p><a href="./index.html"><img src="./images/homebutton.png" height="40"/></p>
+  contact:
+    name: MapmyIndia API Support
+    url: https://about.mappls.com/contact/
+    email: apisupport@mappls.com
+  termsOfService: https://about.mappls.com/about/privacy-policy
+  version: V1.0.0
+  license:
+    name: Revised BSD-3 Clause
+    url: https://github.com/mappls-api/
+tags:
+  - name: Dataset, Query and Validate (DQV) API
+    description: >-
+      DQV API is used to fetch the entire dataset, fetch the results of the
+      query applied on the dataset and validate the query applied.
+servers:
+  - url: https://mgis-api.mappls.com/
+    description: Production server for mGIS APIs
+paths:
+  /getDataset:
+    get:
+      tags:
+        - Dataset, Query and Validate (DQV) API
+      summary: Fetches the entire dataset.
+      description: >-
+        Fetches the entire dataset. You can perform 'order(sort) By' and
+        'groupBy' in 'query'. This has 3 cases:<li>Only Order By</li> <li>Only
+        Group By</li> <li>Both Order By and Group By together</li>
+      operationId: getDatasetId
+      parameters:
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/groupByDatasetParam'
+        - $ref: '#/components/parameters/propertyNameParam'
+        - $ref: '#/components/parameters/orderByDatasetParam'
+        - $ref: '#/components/parameters/orderByPropertyDatasetParam'
+        - $ref: '#/components/parameters/startIndexParam'
+        - $ref: '#/components/parameters/countParam'
+        - $ref: '#/components/parameters/bboxParam'
+        - $ref: '#/components/parameters/datastore'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getDatasetRes'
+        '206':
+          description: Impartial Content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject206'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon404'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /query_apply/single:
+    get:
+      tags:
+        - Dataset, Query and Validate (DQV) API
+      summary: >-
+        Fetches the  results of the query applied on the single dataset. You
+        cannot pass query, summerizeValue and uniqueValue paramater together.
+      description: >-
+        You cannot pass query, summerizeValue and uniqueValue paramater
+        together. You can perform 'order(sort) By' and 'groupBy' in 'query'.
+        This has 3 cases:<li>Only Order By</li> <li>Only Group By</li> <li>Both
+        Order By and Group By together</li><br> You can perform geometric
+        operation (area and length) when queryType = 'functionBased' is passed.
+        The query parameter is an optional paramater in this case.
+        summerizeValue and uniqueValue paramater are not applicable in this
+        case.
+      operationId: applyQuerySingleId
+      parameters:
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/queryTypeSingleParam'
+        - $ref: '#/components/parameters/queryParam'
+        - $ref: '#/components/parameters/uniqueValueParam'
+        - $ref: '#/components/parameters/summerizeValueParam'
+        - $ref: '#/components/parameters/groupByParam'
+        - $ref: '#/components/parameters/propertyNameParam'
+        - $ref: '#/components/parameters/orderByParam'
+        - $ref: '#/components/parameters/orderByPropertyParam'
+        - $ref: '#/components/parameters/propertyNameSingleParam'
+        - $ref: '#/components/parameters/comparisonFunctionSingleParam'
+        - $ref: '#/components/parameters/comparisonOperatorSingleParam'
+        - $ref: '#/components/parameters/comparisonValueSingleParam'
+        - $ref: '#/components/parameters/saveAsNewDatasetSingleParam'
+        - $ref: '#/components/parameters/newDatasetNmeSingleParam'
+        - $ref: '#/components/parameters/sortByParam'
+        - $ref: '#/components/parameters/startIndexParam'
+        - $ref: '#/components/parameters/countParam'
+        - $ref: '#/components/parameters/bboxParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/query_applySingle'
+        '206':
+          description: Impartial Content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject206'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon404'
+        '405':
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject405'
+        '409':
+          description: Conflict in parameters passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject409'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /query_apply/join:
+    get:
+      tags:
+        - Dataset, Query and Validate (DQV) API
+      summary: >-
+        Fetches the results of the query applied between two dataset as well as
+        between one datset and user defimed geometry.
+      description: >-
+        User can performed both the following tasks:<li>Non Spatial
+        Query</li><li>Spatial Query</li><br>For spatial query user can perform
+        the query between 2 datasets as well as between one dataset and user
+        defined geometry in geojson format. Whereas Non-Spatial Query is only
+        applicable between 2 datasets.
+      operationId: applyQueryCrossId
+      parameters:
+        - $ref: '#/components/parameters/queryTypeParam'
+        - $ref: '#/components/parameters/datasetSourceParam'
+        - $ref: '#/components/parameters/datasetRefParam'
+        - $ref: '#/components/parameters/operatorParam'
+        - $ref: '#/components/parameters/sourcePropertyParam'
+        - $ref: '#/components/parameters/refPropertyParam'
+        - $ref: '#/components/parameters/selectionParamSourceParam'
+        - $ref: '#/components/parameters/selectionParamRefParam'
+        - $ref: '#/components/parameters/userGeom'
+        - $ref: '#/components/parameters/distanceJoin'
+        - $ref: '#/components/parameters/Geometry'
+        - $ref: '#/components/parameters/comparisonFunctionParam'
+        - $ref: '#/components/parameters/comparisonOperatorParam'
+        - $ref: '#/components/parameters/comparisonValueParam'
+        - $ref: '#/components/parameters/saveAsNewDataset'
+        - $ref: '#/components/parameters/newDatasetNme'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/query_applyCross'
+        '206':
+          description: Impartial Content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject206'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject401'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon404'
+        '405':
+          description: Method not allowed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject405'
+        '409':
+          description: Conflict in parameters passed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject409'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /query_validation:
+    get:
+      tags:
+        - Dataset, Query and Validate (DQV) API
+      summary: Validates the query to be applied on a dataset.
+      description: Validates the query to be applied on a dataset.
+      operationId: queryValidateId
+      parameters:
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/query1Param'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/validateQueryRes'
+        '206':
+          description: Impartial Content.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject206'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon404'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /getBoundingBox:
+    get:
+      tags:
+        - Dataset, Query and Validate (DQV) API
+      summary: Returns the BoundingBox of the particular layer.
+      description: >-
+        Returns the Bounding Box of the particular layer without cql_filter and
+        returns the bounding box of feature with cql_filter.
+      operationId: BoundingBoxID
+      parameters:
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/queryParam11'
+        - $ref: '#/components/parameters/datastore'
+        - $ref: '#/components/parameters/layerType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getBoundingBoxRes'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+  /expression:
+    get:
+      tags:
+        - Dataset, Query and Validate (DQV) API
+      summary: >-
+        Performs arithmetic,geometric,aggregate and string operations on
+        column(s) of a dataset passed as an input.
+      description: >-
+        Performs arithmetic,string,geometric and aggregate operations on a
+        column of a dataset passed as an input.<br>Arithmetic operations are +,
+        -, *, /. <br> String operations are concat, lower, upper, initcap,
+        replace, length, substring. <br> Geometric operations are
+        area,length,latitude,longitude,centroid. <br> Aggregate operations are
+        count,min,max,median,stddev,sum,avg.
+      operationId: expressionId
+      parameters:
+        - $ref: '#/components/parameters/queryType'
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/operator'
+        - $ref: '#/components/parameters/col'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/new_column'
+        - $ref: '#/components/parameters/exp_filter'
+        - $ref: '#/components/parameters/delimiter'
+        - $ref: '#/components/parameters/oldData'
+        - $ref: '#/components/parameters/newData'
+        - $ref: '#/components/parameters/start'
+        - $ref: '#/components/parameters/steps'
+        - $ref: '#/components/parameters/groupBy'
+        - $ref: '#/components/parameters/distinct'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/expressionoperation'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon404'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+components:
+  requestBodies:
+    objSave:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              geometry:
+                type: object
+                properties:
+                  coordinates:
+                    description: >-
+                      updated geomtery coordinates.<br><br>Case-1 multipoint
+                      {"geometry":{"coordinates":[500000,54505678]}}</br><br>Case-2
+                      multipolygon
+                      {"geometry":{"coordinates":[[[76.55555,24.046464],[76.552734,28.844674],[83.056641,28.844674],[83.056641,24.046464],[76.55555,24.046464]]]}}</br><br>Case-3
+                      multiline
+                      {"geometry":{"coordinates":[[500000,54505678],[0,540000],[5450000,0]]}}
+          example:
+            geometry:
+              coordinates:
+                - - 500000
+                  - 54505678
+                - - 0
+                  - 540000
+                - - 5450000
+                  - 0
+  parameters:
+    datasetNmeParam:
+      name: datasetNme
+      in: query
+      description: The dataset name of whose information has to be fetched.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: india
+    queryParam11:
+      name: query
+      in: query
+      description: the cql_filter to be applied on the layer.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: state = 'Delhi'
+    datastore:
+      name: datastore
+      in: query
+      description: Name of datastore where adaptor published.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: adaptor
+    layerType:
+      name: layerType
+      in: query
+      description: When user to fetch bbox for admin layers.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: admin
+    saveAsNewDataset:
+      name: saveAsNewDataset
+      in: query
+      description: Boolean if true cross join result will be saved in to db as new table.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: true
+    newDatasetNme:
+      name: newDatasetNme
+      in: query
+      description: Name of new Table(mandatory if saveAsNewDataset = true)
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: JoinTable
+    datasetNmeParamGeom:
+      name: datasetNme
+      in: query
+      description: >-
+        The dataset on which geometric operation has to be performed. It is
+        mandatory in case of performing geometric operations within the datset.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geo
+    functionNameGeom:
+      name: functionNme
+      in: query
+      description: >-
+        Geometric operators which are acceptable are: <li>For user defined
+        geometry: <b>intersection, area, buffer, distance, centroid, isEmpty,
+        length and endPoint</b> <li>For within the dataset: <b>area, buffer,
+        centroid, isEmpty, length and endPoint</b>
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: area
+    distance:
+      name: distance
+      in: query
+      description: Mandatory in case when opertaor used is Buffer, else it is not required.
+      schema:
+        type: number
+      example: 10
+    distanceJoin:
+      name: distance
+      in: query
+      description: Mandatory in case of operator DWithin, else it is not required.
+      schema:
+        type: number
+      example: 10
+    Geometry1:
+      name: geom1
+      in: query
+      description: user defined geometry in terms of geoJSON
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: |-
+        {
+        "type": "Polygon",
+        "coordinates": [
+        [
+        [
+        75.9375,
+        23.725011735951796
+        ],
+        [
+        78.92578124999999,
+        23.725011735951796
+        ],
+        [
+        78.92578124999999,
+        26.115985925333536
+        ],
+        [
+        75.9375,
+        26.115985925333536
+        ],
+        [
+        75.9375,
+        23.725011735951796
+        ]
+        ]
+        ]
+        }
+    Geometry1Geom:
+      name: geom1
+      in: query
+      description: >-
+        user defined geometry in terms of geoJSON. It is mandatory in case of
+        user-defined geometry for all the geometric opertaions.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: |-
+        {
+        "type": "Polygon",
+        "coordinates": [
+        [
+        [
+        75.9375,
+        23.725011735951796
+        ],
+        [
+        78.92578124999999,
+        23.725011735951796
+        ],
+        [
+        78.92578124999999,
+        26.115985925333536
+        ],
+        [
+        75.9375,
+        26.115985925333536
+        ],
+        [
+        75.9375,
+        23.725011735951796
+        ]
+        ]
+        ]
+        }
+    Geometry2:
+      name: geom2
+      in: query
+      description: >-
+        user defined geometry in terms of geoJSON(mandatory in case of  user
+        defined geom for intersection and distance)
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: >-
+        { "type": "Polygon", "coordinates": [ [ [ 75.9375, 23.725011735951796 ],
+        [ 78.92578124999999, 23.725011735951796 ], [ 78.92578124999999,
+        26.115985925333536 ], [ 75.9375, 26.115985925333536 ], [ 75.9375,
+        23.725011735951796 ] ] ] }
+    Geometry2Geom:
+      name: geom2
+      in: query
+      description: >-
+        user defined geometry in terms of geoJSON. It is mandatory in case of
+        user-defined geometry for distance and intersection geometric
+        opertaions.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: >-
+        { "type": "Polygon", "coordinates": [ [ [ 75.9375, 23.725011735951796 ],
+        [ 78.92578124999999, 23.725011735951796 ], [ 78.92578124999999,
+        26.115985925333536 ], [ 75.9375, 26.115985925333536 ], [ 75.9375,
+        23.725011735951796 ] ] ] }
+    columnname:
+      name: columnname
+      in: query
+      description: column name on which the aggregate operation has to be performed
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: anzee
+    operationname:
+      name: operation
+      in: query
+      description: >-
+        aggregate operators which are acceptable are Count, Average, Max,
+        Median, Min, StdDev and Sum
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Median
+    singlePASS:
+      name: singlePass
+      in: query
+      description: >-
+        If TRUE computes all aggregation values in a single pass. Its default
+        value is set true
+      required: false
+      allowEmptyValue: true
+      schema:
+        type: boolean
+      example: true
+    firstgeom:
+      name: geom1
+      in: query
+      description: user defined geometry in terms of geoJSON
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: null
+    col:
+      name: col
+      in: query
+      description: >-
+        Single/Multiple column names on which the querytype operations has to be
+        performed. In case of Querytype Geometric and geometric operators and
+        String Operator(substring) single column value is required.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: district,bank
+    airthoperatorname:
+      name: operator
+      in: query
+      description: Arithmetic operators which are acceptable +, -, *, /
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: +
+    propertyNameParam:
+      name: propertyName
+      in: query
+      description: >-
+        Pass the column names list which you want to display in the resultant.
+        Optional in case of order(sortBy). Mandatory in case of 'groupBy'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: street,poi
+    startIndexParam:
+      name: startIndex
+      in: query
+      description: >-
+        To set the start index from which the user wants the result to be
+        displayed. Applicable for 'query', 'uniqueValue' and 'summerizeValue'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 1
+    groupByParam:
+      name: groupBy
+      in: query
+      description: >-
+        Pass ‘true’ to perform groupBy on the datsetNme. Applicable for 'query'.
+        'propertyName' paramter is mandatory for 'groupBy' parameter.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 'true'
+    groupByDatasetParam:
+      name: groupBy
+      in: query
+      description: >-
+        Pass ‘true’ to perform groupBy on the datsetNme. 'propertyName' paramter
+        is mandatory for 'groupBy' parameter.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 'true'
+    orderByParam:
+      name: sortBy
+      in: query
+      description: >-
+        Pass ‘A' for ascending and ‘D’ for descending to perform order(sort) By.
+        Applicable for all. Mandatory when order(sort) By is to be performed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: A
+    orderByDatasetParam:
+      name: sortBy
+      in: query
+      description: >-
+        Pass ‘A' for ascending and ‘D’ for descending to perform order(sort) By.
+        Mandatory when order(sort) By is to be performed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: A
+    orderByPropertyParam:
+      name: sortByProperty
+      in: query
+      description: >-
+        Pass the column names which the user wants to order(sort) By in the
+        resultant. Applicable for 'query'. Mandatory when order(sort) By is to
+        be performed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: poi,street
+    orderByPropertyDatasetParam:
+      name: sortByProperty
+      in: query
+      description: >-
+        Pass the column names which the user wants to order(sort) By in the
+        resultant. Mandatory when order(sort) By is to be performed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: poi,street
+    countParam:
+      name: count
+      in: query
+      description: >-
+        To fix the number of results to be returned. Applicable for 'query',
+        'uniqueValue' and 'summerizeValue'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 3
+    bboxParam:
+      name: bbox
+      in: query
+      description: Returns the bounding box of the dataset if set as true.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 'false'
+    queryParam:
+      name: query
+      in: query
+      description: >-
+        Query to be applied on the dataset. Mandatory if uniqueValue,
+        summerizeValue and queryType parameter is not passed. This is an
+        optional paramter when queryType = 'functionBased' is passed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: state = 'Delhi'
+    query1Param:
+      name: query
+      in: query
+      description: >-
+        Query to be applied on the dataset. Mandatory if uniqueValue and
+        summerizeValue parameter is not passed.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: state = 'Delhi'
+    uniqueValueParam:
+      name: uniqueValue
+      in: query
+      description: >-
+        Unique values of a attribute of the dataset. Mandatory if query and
+        summerizeValue parameter is not passed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: st_name
+    summerizeValueParam:
+      name: summerizeValue
+      in: query
+      description: >-
+        Summerize values of a attribute of the dataset. Mandatory if query and
+        uniqueValue parameter is not passed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: st_name
+    sortByParam:
+      name: sortBy
+      in: query
+      description: >-
+        Sort the result in ascending(A) or descending(D) order. Applicable for
+        'orderBy', 'groupBy', 'uniqueValue' and 'summerizeValue'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: A
+    queryTypeParam:
+      name: queryType
+      in: query
+      description: >-
+        queryType value can be <b>basic, spatialOperation</b> or
+        <b>functionBased</b>.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: functionBased
+    queryTypeParamCatchment:
+      name: queryType
+      in: query
+      description: queryType value can be <b>basic, spatial</b>.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: functionBased
+    comparisonFunctionParam:
+      name: comparisonFunction
+      in: query
+      description: >-
+        The functions allowed are: <b>Area, Length</b> and <b>isEmpty</b>. This
+        parameter is mandatory for queryType functionBased.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Area
+    comparisonOperatorParam:
+      name: comparisonOperator
+      in: query
+      description: >-
+        The operators allowed are: =, >, <, <>, >= and <=. This parameter is
+        mandatory for queryType functionBased.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '='
+    comparisonValueParam:
+      name: comparisonValue
+      in: query
+      description: >-
+        The values allowed are: <li>Numeric (in meters) (for comparisonFunction
+        area and length)</li><li>Boolean (for comparisonFunction isEmpty)</li>.
+        <br>This parameter is mandatory for queryType functionBased.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '100'
+    datasetSourceParam:
+      name: datasetSource
+      in: query
+      description: >-
+        Source dataset name. Mandatory both in case of Spatial as well as
+        Non-Spatial Query.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geocode_ii
+    datasetRefParam:
+      name: datasetRef
+      in: query
+      description: Source dataset name. Mandatory both in case of Non-Spatial Query.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geocode_iii
+    operatorParam:
+      name: operator
+      in: query
+      description: >-
+        Mandatory both in case of Spatial as well as Non-Spatial Query.
+        <ul><li>Operators allowed for <b>queryType = 'basic'</b> are: </li><=,
+        >=, =, <, >, <>, IN and NOT IN</li><li>Operators allowed for
+        <b>queryType = 'spatialOperation'</b> are:</li> Intersects, Disjoint,
+        Overlaps, Equals, Touches, DWithin, Within, Contains and Crosses</ul>
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Intersects
+    operatorParamCatchment:
+      name: operator
+      in: query
+      description: >-
+        Mandatory both in case of Spatial as well as Non-Spatial Query.
+        <ul><li>Operators allowed for <b>queryType = 'basic'</b> are: </li><=,
+        >=, =, <, >, <>, IN and NOT IN</li><li>Operators allowed for
+        <b>queryType = 'spatial'</b> are:</li> Intersects, Disjoint, Overlaps,
+        Equals, Touches, DWithin, Within, Contains and Crosses</ul>
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Intersects
+    sourcePropertyParam:
+      name: sourceProperty
+      in: query
+      description: >-
+        Source property attributes to be queried. Mandatory both in case of
+        Spatial(between 2 datasets) as well as Non-Spatial Query.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id
+    refPropertyParam:
+      name: refProperty
+      in: query
+      description: >-
+        Reference property attributes to be queried. Mandatory in case of
+        Non-Spatial Query.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id
+    selectionParamSourceParam:
+      name: selectionParamSource
+      in: query
+      description: >-
+        Source property attributes to be reflected in the result. Optional in
+        case of arithmetic operations, Spatial(between 2 datasets) as well as
+        Non-Spatial Query.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id, lat
+    selectionParamRefParam:
+      name: selectionParamRef
+      in: query
+      description: >-
+        Reference property attributes to be reflected in the result. Optional
+        both in case of Spatial(between 2 datasets) as well as Non-Spatial
+        Query.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: osm_id, name
+    userGeom:
+      name: userGeom
+      in: query
+      description: >-
+        Value of UserGeom will be 'true' if user wants to perform spatial
+        filters with user-defined geometry.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: true
+    userGeomGeom:
+      name: userGeom
+      in: query
+      description: >-
+        Value of UserGeom will be 'true' if user wants to perform geometric
+        operations with user-defined geometry.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: true
+    queryTypeSingleParam:
+      name: queryType
+      in: query
+      description: >-
+        queryType value should be functionBased. Mandatory when user has to
+        perform geometric operations with or without query.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: functionBased
+    propertyNameSingleParam:
+      name: propertyName
+      in: query
+      description: >-
+        Property attributes to be reflected in the result. If not passed all the
+        columns of the datasetNme will be displayed in the resultant.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: housenumber
+    comparisonFunctionSingleParam:
+      name: comparisonFunction
+      in: query
+      description: >-
+        The functions allowed are: <b>Area</b> and <b>Length</b>. This parameter
+        is mandatory for queryType functionBased. Applicable for only queryType
+        = 'functionBased
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Area
+    comparisonOperatorSingleParam:
+      name: comparisonOperator
+      in: query
+      description: >-
+        The operators allowed are: =, >, <, <>, >= and <=. This parameter is
+        mandatory for queryType functionBased. Applicable for only queryType =
+        'functionBased
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '='
+    comparisonValueSingleParam:
+      name: comparisonValue
+      in: query
+      description: >-
+        The value should be in numeric (in meters). This parameter is mandatory
+        for queryType functionBased. Applicable for only queryType =
+        'functionBased
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 10
+    saveAsNewDatasetSingleParam:
+      name: saveAsNewDataset
+      in: query
+      description: >-
+        Pass ‘true’ for the resultant to be saved in to user's workspace as a
+        new table. Applicable for only queryType = 'functionBased
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 'true'
+    newDatasetNmeSingleParam:
+      name: newDatasetNme
+      in: query
+      description: >-
+        Name of the table in which the resultant has to be stored. This
+        parameter is mandatory  if saveAsNewDataset = true. Applicable for only
+        queryType = 'functionBased'
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geotest
+    featureIDParam:
+      name: featureID
+      in: query
+      description: >-
+        feature id of the particular feature of the layer whose geometry is
+        required.
+      schema:
+        type: string
+      example: india.8
+    filterParam:
+      name: filter
+      in: query
+      description: query on the basis of which the geometry is required.
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id=368
+    Geometry:
+      name: geometry
+      in: query
+      description: >-
+        User defined geometry will be of geoJSON format. It will contain the
+        geometry key-value part of the geojson. The geojson should contain the
+        coordinates in <b>[lon, lat] format</b>.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: |-
+        {
+        "type":"MultiLineString","coordinates":[
+        [
+        [
+        100.0,
+        0.0
+        ],
+        [
+        101.0,
+        1.0
+        ]
+        ],
+        [
+        [
+        102.0,
+        2.0
+        ]
+        ,[
+        103.0,
+        3.0
+        ]
+        ]
+        ]
+        }
+    type:
+      name: type
+      in: query
+      description: >-
+        This parameter consists the type of property. Properties are - Create,
+        View, Update. In case of Create We need new column.<br><b> In case of
+        View, new_column is not required and the data after operation will be
+        shown in response. <br>In case of Update the values get updated in the
+        col of the table.<br> In case of Geometric Operations UPDATE method/type
+        are not applicable. <br> In case of Aggregate Operations CREATE and
+        UPDATE methods/types are not applicable.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: view
+    new_column:
+      name: new_column
+      in: query
+      description: >-
+        new_column parameter is only mandatory in case of Type:Create, which is
+        the name of new column to be created
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: updated_values
+    filter:
+      name: filter
+      in: query
+      description: >-
+        Filter is the query to be applied on the dataset. It is an optional
+        parameter for spatial queryType, if filter is not passed in an spatial
+        operation the result will show all the data on the basis of column
+        values.<br>[Note:Filter cannot be applied on basic queryType.]
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: district in ( 'Bikaner','Churu')values
+    exp_filter:
+      name: filter
+      in: query
+      description: Filter is the query to be applied on the dataset.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: district in ( 'Bikaner','Churu')values
+    delimiter:
+      name: delimiter
+      in: query
+      description: >-
+        A delimiter is a sequence of one or more characters for specifying the
+        boundary between separate, independent regions in plain text,
+        mathematical expressions or other data streams. An example of a
+        delimiter is the comma character, which acts as a field delimiter in a
+        sequence of comma-separated values.[Note: Delimiter is applicable when
+        when multiple column names have been added and its value always be in
+        single inverted comma.]
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '''_'''
+    oldData:
+      name: oldData
+      in: query
+      description: oldData is the existing value which can be replaced.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Bikaner
+    newData:
+      name: newData
+      in: query
+      description: New Value that needs to be replaced with an existing value.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Delhi
+    start:
+      name: start
+      in: query
+      description: starting index of substring.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 2
+    steps:
+      name: steps
+      in: query
+      description: >-
+        number of characters in the substring. If steps is blank then substring
+        will contain characters from starting value provided to end of string.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 5
+    groupBy:
+      name: groupBy
+      in: query
+      description: >-
+        Pass the column names list which you want to display in the resultant.
+        In case of multiple attributes  passed in the groupBy parameter, by
+        default it will take the first column for group by. <br><b>In case of
+        Aggregate Operation user can pass single/multiple attribute.
+        </b><br><b>In case of String and Arithmetic Operations groupBy, In case
+        of multiple attributes  passed in the groupBy parameter, by default it
+        will take the first column for group by.</b><br><b>In case of Geometric
+        Operation groupBy is not applicable.</b>
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: household
+    operator:
+      name: operator
+      in: query
+      description: >-
+        Operator can contain the value of
+        arithmetic,string,aggregate,geometric.<br><b>Arithmetic Operators 
+        -,+,/,* <br>String Operators =
+        Length,Upper,Lower,InitCap,Concat,Replace,Substring <br>Aggregate
+        Operators =  Count, Average, Max, Median, Min, StdDev, Sum and distinct
+        <br>Geometric Operators = Lat,Long,Centroid,Area,Length
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: replace
+    distinct:
+      name: distinct
+      in: query
+      description: >-
+        Distinct parameter is used when user want to get unique values of
+        single/multiple columns of a dataset. Boolean values True and false can
+        be passed. It is mandatory parameter when operator is distinct with
+        queryType = aggregate.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: true
+    dboperator:
+      name: operator
+      in: query
+      description: >-
+        Operators allowed for queryType = "basic" are:<br> <=, >=, =, <, >, <>,
+        IN and NOT IN<br> Operators allowed for queryType = "spatial"
+        are:<br>Intersects, Disjoint, Overlaps, Equals, Touches, DWithin,
+        Within, Contains and Crosses
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '>'
+    src_tableNme:
+      name: src_tableNme
+      in: query
+      description: >-
+        The Dataset available with us, in our database will be the source
+        table.<br>Mandatory in case of queryType basic and operators(<,>,= etc)
+        Not mandatory in basic queryType except (IN and NOTIN) operators.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: data003
+    ref_tableNme:
+      name: ref_tableNme
+      in: query
+      description: >-
+        The reference table name is the name of Dataset available within another
+        database.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: state_test
+    src_column:
+      name: src_column
+      in: query
+      description: >-
+        Columns of the source table, src_column can have single column or
+        multiple column as value.<br>Mandatory in case of queryType basic and
+        operators(<,>,= etc) Not mandatory in basic queryType except (IN and
+        NOTIN) operators
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geom
+    ref_column:
+      name: ref_column
+      in: query
+      description: >-
+        Columns of the reference table, ref_column can have single column or
+        multiple columns as value.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geom,stt_id
+    filterColumn:
+      name: filterColumn
+      in: query
+      description: >-
+        Contains the attributes of source table, in case of basic
+        queryType.<br>Mandatory in case of basic operations.<br> [Note:It will
+        not work in case of NOTIN and IN operators].
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: stt_id
+    filterValue:
+      name: filterValue
+      in: query
+      description: >-
+        Values of filter column is passed in the filterValue
+        parameter.<br>Mandatory in case of basic operations.<br> [Note:will not
+        work in case of NOTIN and IN operators].
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 4
+    src_cnd_clmn:
+      name: src_cnd_clmn
+      in: query
+      description: >-
+        Source condition column will work only in case of queryType= basic (NOT
+        IN and IN operators).
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id_1
+    ref_cnd_clmn:
+      name: ref_cnd_clmn
+      in: query
+      description: >-
+        Refrence condition column will work only in case of queryType = basic 
+        (NOT IN and IN operators).
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: stt_id
+    queryType:
+      name: queryType
+      in: query
+      description: >-
+        queryType values can be arithmetic,string,geometric and aggregate. On
+        the basis of queryType value API can find which type of query you want
+        to execute.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: arithmetic
+  schemas:
+    getDatasetRes:
+      title: getDataset
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response code.
+          example: '200'
+        result:
+          type: object
+          properties:
+            type:
+              type: string
+              example: FeatureCollection
+            features:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: feature
+                  id:
+                    type: string
+                    example: india.1
+                    description: feature id of the feature attribute.
+                  geometry:
+                    type: string
+                    description: geometry of the feature attribute.
+                    example: 'null'
+                  properties:
+                    type: object
+                    properties:
+                      st_name:
+                        type: string
+                        example: ANDAMAN AND NICOBAR ISLANDS
+            totalFeatures:
+              type: number
+              example: 35
+            numberMatched:
+              type: number
+              example: 35
+            numberReturned:
+              type: number
+              example: 1
+            timestamp:
+              type: string
+              example: '2020-08-10T13:59:51.624Z'
+            links:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: next page
+                  type:
+                    type: string
+                    example: application/json
+                  rel:
+                    type: string
+                    example: next
+                  href:
+                    type: string
+                    example: >-
+                      http://localhost:8081/geoserver/wfs?PROPERTYNAME=st_name&TYPENAME=anjali%3Aindia&REQUEST=GetFeature&OUTPUTFORMAT=application%2Fjson&VERSION=2.0.0&SERVICE=WFS&COUNT=1&ISDENORMALIZED=false&STARTINDEX=1
+            crs:
+              type: string
+              example: 'null'
+    getBoundingBoxRes:
+      title: getBoundingBox
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response code.
+          example: '200'
+        result:
+          type: object
+          properties:
+            type:
+              type: string
+              example: FeatureCollection
+            features:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: feature
+                  id:
+                    type: string
+                    example: india.1
+                    description: feature id of the feature attribute.
+                  geometry:
+                    type: string
+                    description: geometry of the feature attribute.
+                    example: 'null'
+                  properties:
+                    type: object
+                    properties:
+                      bbox:
+                        type: string
+                        example: >-
+                          BOX(74.7912769996 34.0866250004,74.7912769996
+                          34.0866250004)
+            totalFeatures:
+              type: number
+              example: 1
+            numberMatched:
+              type: number
+              example: 1
+            numberReturned:
+              type: number
+              example: 1
+            timestamp:
+              type: string
+              example: '2020-08-10T13:59:51.624Z'
+            crs:
+              type: string
+              example: 'null'
+    getGeometryRes:
+      type: object
+      properties:
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+              example: Multipoint
+            coordinates:
+              type: string
+              example:
+                - 80.3519
+                - 26.4634
+            geometry_name:
+              type: string
+              description: geometry of the feature attribute.
+              example: geom
+            properties:
+              type: string
+              example: {}
+    query_applySingle:
+      title: query_apply (Single Table)
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response code.
+          example: '200'
+        result:
+          type: object
+          properties:
+            type:
+              type: string
+              example: FeatureCollection
+            features:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    example: Feature
+                  id:
+                    type: string
+                    example: ' india.2'
+                  geometry:
+                    type: string
+                    example: 'null'
+                  properties:
+                    type: object
+                    properties:
+                      st_name:
+                        type: string
+                        example: Andhra Pradesh
+            totalFeatures:
+              type: number
+              example: 1
+            numberMatched:
+              type: number
+              example: 1
+            numberReturned:
+              type: number
+              example: 1
+            timestamp:
+              type: string
+              example: '2020-08-10T13:59:51.624Z'
+            crs:
+              type: string
+              example: 'null'
+        layerBounds:
+          type: string
+          example: 'null'
+    query_applyCross:
+      title: query_apply (Cross Join)
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response code.
+          example: '200'
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              prop1:
+                type: string
+                description: Prop1 value
+              prop2:
+                type: string
+                description: Prop2 value
+              prop3:
+                type: string
+                description: Prop3 value
+              prop4:
+                type: string
+                description: Prop4 value
+              prop5:
+                type: string
+                description: Prop5 value
+              prop6:
+                type: string
+                description: Prop6 value
+              prop7:
+                type: string
+                description: Prop7 value
+              prop8:
+                type: string
+                description: Prop8 value
+    validateQueryRes:
+      title: validateQuery
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response code.
+          example: '200'
+        message:
+          type: string
+          description: Displays the message wheather the query is valid or invalid.
+          example: Valid Query
+          properties:
+            type:
+              type: string
+              example: FeatureCollection
+    airthmeticoperation:
+      title: airthmeticoperation
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response Code
+          example: '200'
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              ogc_fid:
+                type: number
+                example: 7
+              type:
+                type: string
+                example: Roadside Service Lane
+              lat:
+                type: number
+                example: 32.3345
+              lon:
+                type: number
+                example: 77.5859
+              airthematic_res:
+                type: number
+                example: 109.9204
+    expressionoperation:
+      title: airthmeticoperation
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response Code
+          example: '200'
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              lat:
+                type: number
+                example: 32.3345
+              lon:
+                type: number
+                example: 77.5859
+              updated_values:
+                type: number
+                example: 109.9204
+    aggregateoperation:
+      title: aggregateoperation
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response Code
+          example: '200'
+        result:
+          type: object
+          properties:
+            GroupByAttributes:
+              type: array
+              items:
+                type: string
+            AggregationResults:
+              type: array
+              items:
+                type: array
+                items:
+                  type: number
+                  description: Aggregated Value
+                  example: '21.168174'
+            AggregationFunctions:
+              type: array
+              items:
+                type: string
+                description: Aggregate Function
+                example: Median
+            AggregationAttribute:
+              type: string
+              description: Attribute on which aggregate function performed
+              example: latitude
+    datasetArea:
+      title: datasetArea
+      type: object
+      properties:
+        code:
+          type: string
+          description: response code
+          example: '200'
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              area:
+                type: number
+                description: value of area after spatial operation
+                example: '0.2670491076815'
+    datasetBuffer:
+      title: datasetBuffer
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response Code
+          example: '200'
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              buffer:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: type of Geometry
+                    example: Polygon
+                  coordinates:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          type: string
+                          description: value of Coordinates
+                          example: 90.1841592739256, 47.0308729725456
+    usergeomarea:
+      title: usergeomarea
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response Code
+          example: '200'
+        result:
+          type: number
+          description: area of two geometry
+          example: '7.1449033393633705'
+    usergeomintersect:
+      title: usergeomintersect
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response Code
+          example: '200'
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              buffer:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: type of Geometry
+                    example: Polygon
+                  coordinates:
+                    type: array
+                    items:
+                      type: array
+                      items:
+                        type: array
+                        items:
+                          type: string
+                          description: value of Coordinates
+                          example: 78.9258, 23.725
+    CreateTable:
+      title: Create table
+      type: object
+      properties:
+        code:
+          type: number
+          description: OK
+          example: 200
+        result:
+          type: string
+          example: Table created Sucessfully.
+    ErrorObject206:
+      title: Impartial Content ErrorObject
+      type: object
+      properties:
+        code:
+          type: number
+          description: Error code.
+          example: 206
+        message:
+          type: string
+          description: Error message.
+          example: Invalid UniqueValue.
+    ErrorObject400:
+      title: Geoserver ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error exception code.
+          example: Invalid Parameter value
+        message:
+          type: string
+          description: Error message.
+          example: Layer not found.
+        auth:
+          type: string
+          example: unsuccessful
+        code:
+          type: number
+          description: Error code.
+          example: 400
+    ErrorObjectGetgeom400:
+      title: AuthorizationErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: error due to missing param
+          example: Mandatory Parameters missing
+    ErrorObject401:
+      title: AuthorizationErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: error due to authorization
+          example: authorization unsuccesful
+    ErrorObject404:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: No data abvailable in database
+          example: No data found
+    ErrorObject405:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: method not allowerd, wrong method or invalid parameters
+          example: Method not allowed
+    ErrorObject409:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: wrong parameters
+          example: wrong parameters
+    ErrorObjectCommon:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: No data found in Database.
+          example: Bad request. Username not found.
+    ErrorObjectCommon404:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: No data found in Database.
+          example: No data found in Database.
+    ErrorObject500:
+      title: Internal Server ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: Internal server error.
+          example: Something went wrong.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []

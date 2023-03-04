@@ -1,0 +1,1678 @@
+openapi: 3.0.1
+info:
+  title: Style API
+  description: >-
+    *Style API is used to update and add new styles to existing datasets.*  <ul>
+    <li><b>Features</b> <ul>  <li>Styles supported so far -   <ol>Basic
+    style</ol> <ol>Icon based style</ol> <ol>Cluster style</ol> <ol>Heatmap
+    (density based)</ol> <ol>Heatmap (attribute based)</ol> <ol>Category based
+    style (Attribute based)</ol>  <ol>Bubble style (Graduated)</ol><ol>Chart
+    Style</ol><ol>D3bubble Style</ol>
+
+    </li> <li> Let the users toggle most of the styles. Most of the styles are
+    persistent </li> </ul> </li> </ul> <br> <hr> <br> <p>
+    
+    <img src="https://www.mapmyindia.com/api/img/mapmyindia-api.png" height="70"/> 
+    On
+    a Mission to  <b>"Make our world better through maps, location technologies
+    & IoT" </b>, MapmyIndia is continuously enabling real time hyper-local
+    information access through its map & location services. mGIS APIs are a part
+    of mGIS platform and the document describes APIs usage and specifications
+    for their integration into an application. The document covers : </p> <ul>
+    <li>List of APIs along with use cases</li> <li>Explanation of resources and
+    query parameters</li> <li>Listing of response structure and data type</li>
+    </ul>
+
+    ## Important notes
+
+    <ul> <li>  <b>URLs</b>: the urls to use for UAT and Production are:  <ul>
+    <li> <b>Production</b>:<code>https://mgis-api.mappls.com/</code>  </li>
+    <li> <b>UAT</b>:<code>https://mgis-preprod.mapmyindia.in/</code>  </li>
+    <li>To call our API, the endpoint requires access-token authorization and
+    the <code>access-token</code> needs to be . For example
+    <code>https://mgis-api.mapmyindia.com/example </code>Pass header as
+    <code>Authorization:Bearer access_token</code> </li> </ul> </li> <li>For any
+    issues or questions please submit it to our support : <a
+    href="mailto:apisupport@mappls.com" target="_blank">API Support</a>.If
+    you have some non-technical or commercial queries, contact your service
+    account manager </li> </ul>
+    <p><a href="./index.html"><img src="./images/homebutton.png" height="40"/></p>
+  contact:
+    name: MapmyIndia API Support
+    url: https://about.mappls.com/contact/
+    email: apisupport@mappls.com
+  termsOfService: https://about.mappls.com/about/privacy-policy
+  version: V1.0.0
+  license:
+    name: Revised BSD-3 Clause
+    url: https://github.com/mappls-api/
+tags:
+  - name: Style API
+    description: ''
+servers:
+  - url: https://mgis-api.mappls.com/
+    description: Production server for mGIS APIs
+paths:
+  /style/vu/update:
+    post:
+      tags:
+        - Style API
+      summary: Updates/Creates style for vector dataset.
+      description: >-
+        Takes input in request body to modify/create style of the dataset.
+        Extremely useful for visualizing data in different ways for further
+        analysis/manipulation of dataset on mGIS platform
+      operationId: StylePost
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/styleBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/styleResponse'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject'
+        '401':
+          description: Unauthorized, access_code is not valid for the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject401'
+        '500':
+          description: Internal Server Error, the request caused an error in our systems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /styles:
+    get:
+      tags:
+        - Style API
+      summary: Get information about styles stored in SLDs
+      description: >-
+        Takes input in request body to get style information of the dataset.
+        Extremely useful for getting initial values of style params of dataset
+        on mGIS platform
+      operationId: StyleGet
+      parameters:
+        - $ref: '#/components/parameters/datasetNme'
+        - $ref: '#/components/parameters/styleType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/stylesGetResponse'
+        '204':
+          description: No Content, No SLD params could be extracted from SLD
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject'
+        '401':
+          description: Unauthorized, access_code is not valid for the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject401'
+        '404':
+          description: Not Found, Style doesn't exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject404'
+        '500':
+          description: Internal Server Error, the request caused an error in our systems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+components:
+  requestBodies:
+    styleBody:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              datasetNme:
+                description: name of the dataset whose style needs to added/modified
+                example: test
+                type: string
+              styleType:
+                description: >-
+                  this parameter is used to determine which type of style is
+                  being manipulated or created for the dataset. For example -
+                  (**basic, icon_based, cluster, heat, category_based, bubble,
+                  graduated, heat_attr,d3_bubble, chart**)
+                example: basic
+                type: string
+              polygonfillcolor:
+                description: hex color without '#' of the polygon/s
+                example: f2e824
+                type: string
+              polygonfillopacity:
+                description: opacity of polygon/s ranging from 0-1
+                example: 0.7
+                type: string
+              polygonType:
+                description: >-
+                  it signifies what kind of fill should be used, can have the
+                  following values => simple, circle, hatchfill [default =
+                  simple]
+                example: hatchfill
+                type: string
+              polygongraphicbordercolor:
+                description: >-
+                  sets the color of graphic border if graphic is being used in
+                  the fill pattern [default = 000000]
+                example: 161617
+                type: string
+              polygongraphicborderwidth:
+                description: >-
+                  this can be used to define the width of the border of graphic
+                  used [default = 1], in case of polygonType = "hatchfill" this
+                  param can be used to increase the width of the pattern used in
+                  hatchfill
+                example: 1
+                type: string
+              polygongraphicborderopacity:
+                description: >-
+                  this can be used to define the opacity of the border of
+                  graphic ranging from 0-1 [default = 1]
+                example: 0.7
+                type: string
+              polygonGraphicSize:
+                description: >-
+                  sets the size of graphic in pixels if it is being used in the
+                  fill pattern, for example in lineType **circle**,
+                  *polygonGraphicSize* can be used to set size of circle[default
+                  = 16]
+                example: 10
+                type: string
+              linestrokecolor:
+                description: hex color without '#' of the line/s
+                example: 2ce622
+                type: string
+              linestrokewidth:
+                description: >-
+                  width of the line/s in pixels [**linestrokewidth should be
+                  greater than zero and should be less than 13**]
+                example: 2
+                type: string
+              linestrokeopacity:
+                description: opacity of line/s ranging from 0-1
+                example: 0.5
+                type: string
+              lineType:
+                description: >-
+                  it signifies what kind of line should be used, can only have
+                  the following values => **simple line, dashed line, dotted
+                  line, railroad, crossroad, xroad, vertline, slash, backslash**
+                  [default = simple line]
+                example: simple line
+                type: string
+              lineGraphicSize:
+                description: >-
+                  sets the size of graphic in pixels if it is being used in the
+                  line pattern, for example in lineType dotted line,
+                  lineGraphicSize can be used to set size of circle or dots
+                  [default = 4]
+                example: 4
+                type: string
+              lineGraphicSpacing:
+                description: >-
+                  this can be used to define the space between the repeating
+                  pattern in line[default = 2]
+                example: 4
+                type: string
+              lineGraphicFillColor:
+                description: >-
+                  this can be used to set the color of the graphic that is being
+                  used as a pattern in line, not applicable in simple and dashed
+                  line [default = c8c9cc]
+                example: c8c9cc
+                type: string
+              pointfillcolor:
+                description: hex color without '#' of the point/s
+                example: '2266e3'
+                type: string
+              pointfillopacity:
+                description: opacity of point/s ranging from 0-1
+                example: 0.8
+                type: string
+              pointbordercolor:
+                description: >-
+                  hex color without '#' for the border of point features
+                  [default: 000000]
+                example: 0
+                type: string
+              pointborderwidth:
+                description: >-
+                  width of border in pixels for point features [default: 0]
+                  (therefore not visible by default) [**pointborderwidth should
+                  be greater than zero and should be less than 7**]
+                example: 2
+                type: string
+              pointborderopacity:
+                description: >-
+                  opacity of border (ranging between 0-1) for point features
+                  [default: 1]
+                example: 0.8
+                type: string
+              pointsize:
+                description: >-
+                  size of point/s in pixels [**pointsize should be greater than
+                  5 and less than 33**]
+                example: 10
+                type: string
+              pointmarker:
+                description: >-
+                  the type of marker in default style for point features, can
+                  have the following values => [**circle** | **square** |
+                  **triangle** | **star** | **cross** | **x**] *OR*
+                  ttf://<FONT_NAME>#0x<SYMBOL_HEXCODE> Example =>
+                  **ttf://Webdings#0x68**
+                example: triangle
+                type: string
+              icon:
+                description: >-
+                  url of the image file that needs to be used as icon [**make
+                  sure the url points to a valid image**]
+                type: string
+                example: https://example.com/image.png
+              iconsize:
+                description: >-
+                  size of icon is pixel. for example if 20 is used then icon
+                  will be of dimension 20 * 20 pixels [**iconsize should be
+                  greater than 7 and less than 49**]
+                type: string
+                example: 10
+              heatColors:
+                description: >-
+                  have effect only when used in combination with parameter
+                  **styleType = heat** . It is the array of colors .This array
+                  of colors is used to create color gradient depicting density ,
+                  where heatColors[0] is the starting color[0.01%](least dense)
+                  and heatColors[n-1] is the ending color[100%](most dense)
+                  where n is the number of colors in heatColors. *For best
+                  visual gradient provide either 2 or 5 colors*.
+                type: string
+                example: '["04ff00", "0095ff"]'
+              heatOpacity:
+                description: >-
+                  opacity of heatmap(density based) (ranging between 0-1) for
+                  point features [default: 0.6]
+                example: 0.8
+                type: string
+              clusterfillcolor:
+                description: >-
+                  defines the color of cluster, it's value should be hexcode of
+                  color without hash symbol
+                example: 17c9ff
+                type: string
+              clusterfillopacity:
+                description: >-
+                  can be used to change the opacity of the clusters, it’s value
+                  ranges from 0 to 1 with the decimal precision of upto 1 digit
+                  [default -> 0.9]
+                example: 0.8
+                type: string
+              clusterlabelcolor:
+                description: >-
+                  can be used to change the color label in clusters [default ->
+                  FFFFFF]
+                example: 0
+                type: string
+              showClusterLabel:
+                description: >-
+                  can be used to toggle on or off label in cluster style [can
+                  have value true]
+                example: true
+                type: string
+              clusterpointmarker:
+                description: >-
+                  can be used to change marker used for clusters [can values
+                  like triangle, circle, cross, etc.]
+                example: 0
+                type: string
+              minZoom:
+                description: >-
+                  zoomed in zoom level that is allowed [a good starting value
+                  would be 18, 19 upto 23] [default: 23] **should be positive
+                  integer less than 24, minZoom should be greater than maxZoom**
+                example: 19
+                type: string
+              maxZoom:
+                description: >-
+                  zoomed out zoom level that is allowed [a good starting value
+                  should be 0,1, upto 22] [default: 0] **should be positive
+                  integer less than 23, maxZoom should be less than minZoom**
+                example: 3
+                type: string
+              columnName:
+                type: string
+                description: >-
+                  used in case, styleType = heat(weighted attribute). name of
+                  column on which weighted heatmap should created.
+                example: literacy
+              radius:
+                type: number
+                description: >-
+                  used in case, styleType = heat(weighted attribute).radius
+                  parameter, which controls the “spread” of the heatmap around
+                  each point
+                example: 100
+              unit:
+                type: number
+                description: >-
+                  used in case, styleType = heat(weighted attribute).unit
+                  parameter, which controls the resolution at which the heatmap
+                  raster is computed
+                example: 10
+              styleJSON:
+                type: object
+                description: >-
+                  Used in case, styleType=category_based OR styleType=bubble OR
+                  styleType=heat_attr OR styleType=chart OR styleType=d3_bubble
+                  (contains information for creating/updating bubble
+                  style/category based style/heat[attribute based] style/chart
+                  style)
+                oneOf:
+                  - $ref: '#/components/schemas/styleJSONCategoryBased'
+                  - $ref: '#/components/schemas/styleJSONBubble'
+                  - $ref: '#/components/schemas/styleJSONGraduated'
+                  - $ref: '#/components/schemas/styleJSONHeatAttr'
+                  - $ref: '#/components/schemas/styleJSONChart'
+              label:
+                $ref: '#/components/schemas/labelSchema'
+            required:
+              - datasetNme
+              - styleType
+    styleBodyinfo:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              datasetNme:
+                description: >-
+                  Name of the raster dataset whose properties need to be
+                  fetched.
+                example: test
+                type: string
+              file:
+                description: File whose properties need to be fetched.
+                type: string
+                format: binary
+  parameters:
+    datasetNme:
+      name: datasetNme
+      in: query
+      description: Name of the dataset whose SLD parameters need to be retrieved.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: test_dataset
+    datasetNme_r:
+      name: datasetNme
+      in: query
+      description: Name of the raster dataset whose SLD parameters need to be retrieved.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: test_dataset
+    datasetNameAnalysis:
+      name: datasetNme
+      in: query
+      description: Name of the raster dataset on which analysis would be done.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: test_dataset
+    datasetName:
+      name: datasetNme
+      in: query
+      description: Name of the raster dataset for which style needs to added/modified.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: test_dataset
+    styleOpacity:
+      name: opacity
+      in: query
+      description: >-
+        To update the opacity of the given raster dataset. Valid values should
+        be between  0 and 1.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 0.5
+    styleType1:
+      name: styleType
+      in: query
+      description: >-
+        This parameter is used to determine which type of style is being
+        manipulated or created for the dataset.<b>Available style types for
+        raster styling are
+        (basic,color_gradient,discrete_color,alpha_channel,transparent_gradient)
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: basic
+    analysisType:
+      name: analysisType
+      in: query
+      description: >-
+        This parameter identifies the type of analysis to be implemented on the
+        given raster dataset. Different analysis types are
+        (aspect,slope,hillshade,roughness).<ul> <li><b>Aspect identifies the
+        downslope direction of the maximum rate of change in value from each
+        cell to its neighbors. Aspect can be thought of as the slope
+        direction.</b></li> <li><b>Slope identifies the steepness at each cell
+        of a raster surface. The lower the slope value, the flatter the terrain;
+        the higher the slope value, the steeper the terrain.</b></li> <li><b>
+        Hillshade creates a hypothetical illumination of a surface by setting a
+        position for a light source and calculating an illumination value for
+        each cell based on the cell's relative orientation to the light, or
+        based on the slope and aspect of the cell.</b></li> <li><b>Roughness is
+        the degree of irregularity of the surface. It’s calculated by the
+        largest inter-cell difference of a central pixel and its sourrounding
+        cell. The determination of the roughness plays a role in the analysis of
+        terrain elevation data.</b></li></ul>
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: aspect
+    styleJSON:
+      name: styleJSON
+      in: query
+      description: >-
+        Array of json objects consist the color or range for the raster
+        dataset.<b><br>For style type basic styleJSON is not required.<br>For
+        style type alpha_channel only one color value is valid.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '[{"color":"00FFC6","range":20},{"color":"FF6B6B","range":780}]'
+    styleType:
+      name: styleType
+      in: query
+      description: >-
+        this is the type of style whose SLD will be used while extracting params
+        (possible values => "basic", "basic_label", "icon_based",
+        "icon_based_label", "cluster", "heat", "category_based",
+        "category_based_label", "bubble", "bubble_label", "graduated",
+        "graduated_label", "heat_attr", "heat_attr_label", "chart",
+        "chart_label","d3_bubble","d3_bubble_label")
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: basic
+  schemas:
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Mandatory parameters missing
+    ErrorObject401:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: unauthorised
+    ErrorObject404:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: style/datasetnme doesn't exist
+    ErrorObject500:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: something went wrong
+    styleResponse:
+      title: /style/vu/update POST route response
+      type: object
+      properties:
+        message:
+          type: string
+          description: >-
+            If everything goes ok then user receives a message indicating that
+            the style has been updated on mGIS platform
+          example: Style for layer 'LAYER_NAME' has been updated successfully
+    stylesrasterAnalysis:
+      title: /style/vu/update POST route response
+      type: object
+      properties:
+        message:
+          type: string
+          description: >-
+            If everything goes ok then user receives a message indicating that
+            the style has been updated on mGIS platform
+          example: File Tripura_aspect Published Successfully
+    stylesGetrasterResponse:
+      title: /style/vu/update POST route response
+      type: object
+      properties:
+        message:
+          type: string
+          description: >-
+            If everything goes ok then user receives a message indicating that
+            the opacity has been updated on mGIS platform
+          example: >-
+            code: 200 data: driverShortName: GTiff driverLongName: GeoTIFF size:
+            - 1422 - 1912 coordinateSystem: wkt: |- GEOGCS["WGS 84",
+            DATUM["WGS_1984", SPHEROID["WGS 84",6378137,298.2572235604902,
+            AUTHORITY["EPSG","7030"]], AUTHORITY["EPSG","6326"]],
+            PRIMEM["Greenwich",0], UNIT["degree",0.0174532925199433],
+            AUTHORITY["EPSG","4326"]] geoTransform: - 91.150789 -
+            0.0008333333333333 - 0 - 24.530918 - 0 - -0.0008333333333333
+            metadata: AREA_OR_POINT:  -Point TIFFTAG_MAXSAMPLEVALUE:  -877
+            TIFFTAG_MINSAMPLEVALUE:  -6 IMAGE_STRUCTURE: INTERLEAVE: BAND
+            cornerCoordinates: upperLeft: - 91.150789 - 24.530918 lowerLeft: -
+            91.150789 - 22.9375847 lowerRight: - 92.335789 - 22.9375847
+            upperRight: - 92.335789 - 24.530918 center: - 91.743289 - 23.7342513
+            wgs84Extent: type: Polygon coordinates: - - - 91.150789 - 24.530918
+            - - 91.150789 - 22.9375847 - - 92.335789 - 22.9375847 - - 92.335789
+            - 24.530918 - - 91.150789 - 24.530918 bands: - band: 1 block: - 1422
+            - 1 type: Int16 colorInterpretation: Gray min: 6 max: 877 minimum: 6
+            maximum: 877 mean: 91.142 stdDev: 74.388 noDataValue: -32767 unit:
+            metre metadata: STATISTICS_MAXIMUM:  877 STATISTICS_MEAN: 
+            91.141909336312 STATISTICS_MINIMUM:  6 STATISTICS_STDDEV: 
+            74.388426614856 STATISTICS_VALID_PERCENT:  48.78
+    stylesGetResponse:
+      title: /styles GET route response
+      type: object
+      properties:
+        sldParams:
+          type: object
+          description: object containing key value pair of parameters extracted from SLD
+          example:
+            pointmarker: triangle
+            pointfillcolor: d90707
+            pointfillopacity: 0.5
+            pointbordercolor: ff1500
+            pointborderopacity: 0.8
+            pointborderwidth: 3
+            pointsize: 10
+            minZoom: 23
+            maxZoom: 0
+            polygonType: simple
+            polygonGraphicSize: 16
+            lineType: simple line
+            lineGraphicSize: 4
+            lineGraphicSizeSpacing: 2
+        setStyle:
+          type: string
+          description: >-
+            the style that is set by default for the dataset at current instance
+            of time
+          example: heat_attr
+        retrievedStyle:
+          type: string
+          description: the style that is being retrieved in the operation performed
+          example: basic
+      example:
+        sldParams:
+          styleJSON:
+            steps: 10
+            colors:
+              - e1ff00
+              - ff0000
+            columnName: res_pop
+            geomType: polygon
+            opacity: 0.7
+            minValue: 0
+            maxValue: 705
+        setStyle: chart
+        retrievedStyle: heat_attr
+    stylesGetResponse1:
+      title: /styles GET route response
+      type: object
+      properties:
+        sldParams:
+          type: object
+          description: object containing key value pair of parameters extracted from SLD
+          example:
+            pointmarker: triangle
+            pointfillcolor: d90707
+            pointfillopacity: 0.5
+            pointbordercolor: ff1500
+            pointborderopacity: 0.8
+            pointborderwidth: 3
+            pointsize: 10
+            minZoom: 23
+            maxZoom: 0
+            polygonType: simple
+            polygonGraphicSize: 16
+            lineType: simple line
+            lineGraphicSize: 4
+            lineGraphicSizeSpacing: 2
+        setStyle:
+          type: string
+          description: >-
+            the style that is set by default for the dataset at current instance
+            of time
+          example: heat_attr
+        retrievedStyle:
+          type: string
+          description: the style that is being retrieved in the operation performed
+          example: basic
+      example:
+        sldParams:
+          styleJSON: >-
+            [{"color": "#03fc77","range": "100"},{"color":
+            "#fcba09","range":"125"},{"color": "#fcba03","range": "254"}]
+        setStyle: color_gradient
+        retrievedStyle: transparent_gradient
+        
+    labelSchema:
+      title: Schema for label parameter
+      description: Use this parameter only when user wants label to be added/edited
+      type: object
+      properties:
+        properties:
+          type: array
+          description: >-
+            name of the column from dataset that needs to be used as label
+            [*should be an array only with length greater than 0*]
+          items:
+            type: string
+            example: column_name
+        font:
+          type: object
+          properties:
+            fontFamily:
+              type: string
+              description: >-
+                name of the font that needs to be used for label [*should be
+                supported on server*]
+              example: Calibri
+            fontStyle:
+              type: string
+              description: can be one of the following => (normal/italic/oblique)
+              example: italic
+            fontWeight:
+              type: string
+              description: can be one of the following => (normal/bold)
+              example: normal
+            fontSize:
+              type: number
+              description: >-
+                size of the font of label in pixels [fontSize can only be
+                between 1 to 20]
+              example: 10
+          required:
+            - fontFamily
+        labelPlacement:
+          oneOf:
+            - type: object
+              properties:
+                pointPlacement:
+                  type: object
+                  properties:
+                    anchorPoint:
+                      type: string
+                      description: >-
+                        can be one of the following values =>
+                        (bottomLeft/topRight/center) [*default -> center*, if
+                        labelPlacement object is used but anchorPoint is not
+                        defined]
+                      example: center
+                    displacement:
+                      type: array
+                      items:
+                        type: integer
+                        description: >-
+                          can only have 2 elements. 1st element is the
+                          displacement from x axis from anchor point and 2nd
+                          element  is the displacement from y axis from anchor
+                          point [*default -> [0,0]*, if labelPlacement object is
+                          used but displacement is not defined] [each
+                          displacement can't be greater than 10]
+                        example:
+                          - 2
+                          - 2
+                    rotation:
+                      type: integer
+                      description: >-
+                        this is the degree of rotation of label from x axis
+                        [*rotation in pointPlacement can only be a number
+                        between 1 to 360*] [*default -> 0*]
+                      example: 10
+            - type: object
+              properties:
+                linePlacement:
+                  type: object
+                  properties:
+                    perpendicularOffset:
+                      type: integer
+                      description: >-
+                        any number representing offset of label from line
+                        features in pixels. Positive values offset to the left
+                        of the line, negative to the right [*perpendicularOffset
+                        in linePlacement can only be a number between -20 to
+                        20*]
+                      example: 5
+        halo:
+          type: object
+          properties:
+            fill:
+              type: string
+              description: >-
+                fill color of halo, any valid hex color code without '#'
+                [*default -> c7c5c1*, if halo object is used but fill is not
+                defined]
+              example: '000000'
+            fillOpacity:
+              type: string
+              description: >-
+                fill opacity of halo, any number between 0 to 1 [*default -> 1*,
+                if halo object is used but fillOpacity is not defined]
+              example: 0.6
+            radius:
+              type: number
+              description: >-
+                radius to which the halo should expand around label [*default ->
+                2*, if halo object is used but radius is not defined]
+              example: 2
+        fill:
+          type: object
+          properties:
+            fill:
+              type: string
+              description: >-
+                fill color of label, any valid hex color code without '#'
+                [*default -> 000000*]
+              example: ffffff
+            fillOpacity:
+              type: number
+              description: >-
+                fill opacity of label, any number between 0 to 1 [*default ->
+                1*]
+              example: 1
+        spaceAround:
+          type: number
+          description: >-
+            By default map_engine will not render labels “on top of each other”.
+            By using the spaceAround option you can either allow labels to
+            overlap, or add extra space around labels.Using the default value of
+            0, the bounding box of a label cannot overlap the bounding box of
+            another label. With a negative spaceAround value, overlapping is
+            allowed.With a positive spaceAround value of 10, each label is at
+            least 20 pixels apart from other
+          example: 10
+        autoWrap:
+          type: number
+          description: >-
+            The autoWrap option wraps labels when they exceed the given width
+            (in pixels). The size should be wide enough to accommodate the
+            longest word, otherwise single words will be split over multiple
+            lines
+          example: 20
+        underlineText:
+          type: boolean
+          description: if set to true label text will be underlined
+          example: true
+        strikethroughText:
+          type: boolean
+          description: if set to true labels will have a strike through line
+          example: true
+        labelSeparator:
+          type: string
+          description: if more than one properties are being used user can give separator
+          example: and
+        followLine:
+          type: boolean
+          description: >-
+            The following option forces a label to follow the curve of the line.
+            Value can be true/false [**only to be used in combination with
+            linePlacement**]
+          example: true
+      required:
+        - properties
+        - font
+    styleJSONCategoryBased:
+      title: styleJSON for category_based style
+      type: object
+      properties:
+        columnName:
+          description: >-
+            Name of the column whose values will be used to create different
+            styles [ columnName should exists in the dataset ] 
+          type: string
+          example: loc_type
+        geomType:
+          description: Type of geometry that you want to visualize (point/line/polygon)
+          type: string
+          example: point
+        size:
+          description: >-
+            Use this in case of geomType=point, to define the size of point in
+            pixels [size should be greater than or equal to 6 and it should be
+            less than or equal to 32]
+          type: integer
+          example: 10
+        linestrokewidth:
+          description: >-
+            Use this in case of geomType=line, to define the width of line in
+            pixels [width should be greater 0 and it should be less than or
+            equal to 12]
+          type: integer
+          example: 3
+        custom:
+          description: >-
+            Define it only when you have to explicity define style of each/any
+            of the feature having specific value | An array of object containing
+            information about style appearence for each/any values | If not
+            provided API creates different rules for all the unique values
+            [custom array length should not exceed 48]
+          type: array
+          items:
+            type: object
+            properties:
+              columnValue:
+                description: value of the column which is defined in 'columnName'
+                type: string
+                example:
+                  - temple
+              pointmarker:
+                description: >-
+                  the type of marker if geomType='point', can have the following
+                  values => [**circle** | **square** | **triangle** | **star** |
+                  **cross** | **x**] *OR* ttf://<FONT_NAME>#0x<SYMBOL_HEXCODE>
+                  Example => **ttf://Webdings#0x68**
+                example:
+                  - triangle
+                type: string
+              color:
+                description: >-
+                  Color of the (line/point/polygon) which matches the value of
+                  'columnValue' for the column 'columnName' | if not provided
+                  then a random color is assigned
+                type: string
+                example: 67dbb5
+              opacity:
+                description: >-
+                  Opacity of the (line/point/polygon) which matches the value of
+                  'columnValue' for the column 'columnName' ranging from 0-1 |
+                  if not provided then a default value is taken
+                type: number
+                example: 0.5
+              borderColor:
+                description: >-
+                  Hex color without '#' of the border of point/polygon | If not
+                  provided a '#000000' color is assigned
+                type: string
+                example: 28085e
+              borderWidth:
+                description: >-
+                  Width of the border of point/polygon in pixel | If not
+                  provided 0.1px is assigned
+                type: integer
+                example: 2
+              borderOpacity:
+                description: >-
+                  Opacity of the border of point/polygon ranges from 0-1 | If
+                  not provided a 1 is assigned
+                type: number
+                example: 0.7
+              polygonfillcolor:
+                description: hex color without '#' of the polygon/s
+                example: f2e824
+                type: string
+              polygonfillopacity:
+                description: opacity of polygon/s ranging from 0-1
+                example: 0.7
+                type: string
+              polygonType:
+                description: >-
+                  it signifies what kind of fill should be used, can have the
+                  following values => simple, circle, hatchfill [default =
+                  simple]
+                example: hatchfill
+                type: string
+              polygongraphicbordercolor:
+                description: >-
+                  sets the color of graphic border if graphic is being used in
+                  the fill pattern
+                example: 161617
+                type: string
+              polygongraphicborderwidth:
+                description: >-
+                  this can be used to define the width of the border of graphic
+                  used, in case of polygonType = "hatchfill" this param can be
+                  used to increase the width of the pattern used in hatchfill
+                example: 1
+                type: string
+              polygongraphicborderopacity:
+                description: >-
+                  this can be used to define the opacity of the border of
+                  graphic ranging from 0-1
+                example: 0.7
+                type: string
+              polygonGraphicSize:
+                description: >-
+                  sets the size of graphic in pixels if it is being used in the
+                  fill pattern, for example in lineType **circle**,
+                  *polygonGraphicSize* can be used to set size of circle
+                example: 10
+                type: string
+              linestrokecolor:
+                description: hex color without '#' of the line/s
+                example: 2ce622
+                type: string
+              linestrokewidth:
+                description: >-
+                  width of the line/s in pixels [**linestrokewidth should be
+                  greater than zero and should be less than 13**]
+                example: 2
+                type: string
+              linestrokeopacity:
+                description: opacity of line/s ranging from 0-1
+                example: 0.5
+                type: string
+              lineType:
+                description: >-
+                  it signifies what kind of line should be used, can only have
+                  the following values => **simple line, dashed line, dotted
+                  line, railroad, crossroad, xroad, vertline, slash, backslash**
+                example: simple line
+                type: string
+              lineGraphicSize:
+                description: >-
+                  sets the size of graphic in pixels if it is being used in the
+                  line pattern, for example in lineType dotted line,
+                  lineGraphicSize can be used to set size of circle or dots
+                example: 4
+                type: string
+              lineGraphicSpacing:
+                description: >-
+                  this can be used to define the space between the repeating
+                  pattern in line
+                example: 4
+                type: string
+              lineGraphicFillColor:
+                description: >-
+                  this can be used to set the color of the graphic that is being
+                  used as a pattern in line, not applicable in simple and dashed
+                  line
+                example: c8c9cc
+                type: string
+              icon:
+                description: >-
+                  this can be used to set the icon of the given data point, not
+                  applicable in line and polygon
+                example: https://cdn-icons-png.flaticon.com/512/5376/5376279.png
+                type: string
+            required:
+              - columnValue
+        default:
+          description: >-
+            Use it for defining style of all the (point/line/polygon) which will
+            not fullfill the criteria of 'custom' array | If not provided API
+            utilizes predefined values for unfiltered features
+          type: object
+          properties:
+            color:
+              type: string
+              description: color of unfiltered features
+              example: ff9f0f
+            opacity:
+              type: number
+              description: opacity ranging from 0-1 of unfiltered features
+              example: 0.8
+      required:
+        - columnName
+        - geomType
+    styleJSONBubble:
+      title: styleJSON for bubble style
+      type: object
+      properties:
+        columnName:
+          description: >-
+            Name of the column whose data will be used for visualization, column
+            that will be used should hold numeric values because we can’t create
+            range from non-numeric values [ columnName provided should exist in
+            the dataset]
+          type: string
+          example: population
+        opacity:
+          description: >-
+            Opacity of the features ranging from 0-1 | if not provided, then a
+            default value is taken
+          type: number
+          example: 0.5
+        color:
+          description: >-
+            Hex color without '#' of the bubbles | If not provided a random
+            color is assigned
+          type: string
+          example: 551cb8
+        borderColor:
+          description: >-
+            Hex color without '#' of the border of bubbles | If not provided a
+            '#000000' color is assigned
+          type: string
+          example: 28085e
+        borderWidth:
+          description: >-
+            Width of the border of bubbles in pixel | If not provided 1px is
+            assigned
+          type: integer
+          example: 2
+        borderOpacity:
+          description: >-
+            Opacity of the border of bubbles ranges from 0-1 | If not provided a
+            1 is assigned
+          type: number
+          example: 0.7
+        minValue:
+          description: >-
+            Starting value of the range(if not provided, can be taken as
+            smallest value of the column in the dataset) | range for
+            interpolation will have this as initial value [minValue can't be
+            greater than maxValue]
+          type: number
+          example: 10000
+        maxValue:
+          description: >-
+            Ending value of the range(if not provided, can be taken as largest
+            value of the column in the dataset) | range for interpolation will
+            have this as final value [minValue can't be greater than maxValue]
+          type: number
+          example: 500000
+        steps:
+          description: >-
+            number of size of bubbles in which data will be divided(if not
+            provided, can be taken as 10) [max:15]
+          type: integer
+          example: 5
+        factor:
+          description: >-
+            This is the number of pixels that will be added to minSize for each
+            step of the range | If not provided calculated using 'minSize' and
+            'maxSize' parameter | styleJSON should either have this value
+            defined or 'maxSize' parameter
+          type: number
+          example: 2
+        minSize:
+          description: >-
+            minimum size of the bubble(can be taken as 6 if not provided by the
+            user) [should be numeric and greater than 3]
+          type: integer
+          example: 8
+        maxSize:
+          description: >-
+            maximum size of the bubble | If 'factor' parameter is defined then
+            this parameter is not necessary as the maximmum size will be
+            determined by 'factor' and 'steps' | 'factor' and 'maxSize' both are
+            defined in styleJSON then 'factor' in given precendence over
+            'maxSize' [should be numeric and less than 65]
+          type: integer
+          example: 32
+      required:
+        - columnName
+    styleJSONd3_bubble:
+      title: styleJSON for d3_bubble style
+      type: object
+      properties:
+        categorystyle:
+          type: object
+          properties:
+            columnName:
+              description: >-
+                Name of the column whose values will be used to create different
+                styles [ columnName should exists in the dataset ] 
+              type: string
+              example: population
+            custom:
+              description: >-
+                Define it only when you have to explicity define style of
+                each/any of the feature having specific value | An array of
+                object containing information about style appearence for
+                each/any values | If not provided API creates different rules
+                for all the unique values [custom array length should not exceed
+                48]
+              type: array
+              items:
+                type: object
+                properties:
+                  columnValue:
+                    description: value of the column which is defined in 'columnName'
+                    type: string
+                    example:
+                      - temple
+                  color:
+                    description: >-
+                      Color of the bubble which matches the value of
+                      'columnValue' for the column 'columnName' | if not
+                      provided then a random color is assigned
+                    type: string
+                    example: 67dbb5
+                  opacity:
+                    description: >-
+                      Opacity of the bubble which matches the value of
+                      'columnValue' for the column 'columnName' ranging from 0-1
+                      | if not provided then a default value is taken
+                    type: number
+                    example: 0.5
+                  borderColor:
+                    description: >-
+                      Hex color without '#' of the border of point/polygon | If
+                      not provided a '#000000' color is assigned
+                    type: string
+                    example: 28085e
+                  borderWidth:
+                    description: >-
+                      Width of the border of bubble in pixel | If not provided
+                      0.1px is assigned
+                    type: integer
+                    example: 2
+                  borderOpacity:
+                    description: >-
+                      Opacity of the border of the bubble ranges from 0-1 | If
+                      not provided a 1 is assigned
+                    type: number
+                    example: 0.7
+                required:
+                  - columnValue
+          required:
+            - columnName
+        bubblestyle:
+          properties:
+            columnName:
+              description: >-
+                Name of the column whose data will be used for visualization,
+                column that will be used should hold numeric values because we
+                can’t create range from non-numeric values [ columnName provided
+                should exist in the dataset]
+              type: string
+              example: population
+            minValue:
+              description: >-
+                Starting value of the range(if not provided, can be taken as
+                smallest value of the column in the dataset) | range for
+                interpolation will have this as initial value [minValue can't be
+                greater than maxValue]
+              type: number
+              example: 10000
+            maxValue:
+              description: >-
+                Ending value of the range(if not provided, can be taken as
+                largest value of the column in the dataset) | range for
+                interpolation will have this as final value [minValue can't be
+                greater than maxValue]
+              type: number
+              example: 500000
+            steps:
+              description: >-
+                number of size of bubbles in which data will be divided(if not
+                provided, can be taken as 10) [max:15]
+              type: integer
+              example: 5
+            factor:
+              description: >-
+                This is the number of pixels that will be added to minSize for
+                each step of the range | If not provided calculated using
+                'minSize' and 'maxSize' parameter | styleJSON should either have
+                this value defined or 'maxSize' parameter
+              type: number
+              example: 2
+            minSize:
+              description: >-
+                minimum size of the bubble(can be taken as 6 if not provided by
+                the user) [should be numeric and greater than 3]
+              type: integer
+              example: 8
+            maxSize:
+              description: >-
+                maximum size of the bubble | If 'factor' parameter is defined
+                then this parameter is not necessary as the maximmum size will
+                be determined by 'factor' and 'steps' | 'factor' and 'maxSize'
+                both are defined in styleJSON then 'factor' in given precendence
+                over 'maxSize' [should be numeric and less than 65]
+              type: integer
+              example: 32
+          required:
+            - columnName
+    styleJSONcolor_gradient:
+      title: styleJSON for color_gradient
+      type: array
+      items:
+        type: object
+        properties:
+          color:
+            description: >-
+              color for the given elevation value. if the range value is not
+              given then it will use default value.
+            type: string
+            example: 00FFC6
+          range:
+            description: elevation value for the given color.
+            type: number
+            example: 10
+    styleJSONGraduated:
+      title: styleJSON for graduated style
+      type: object
+      properties:
+        columnName:
+          description: >-
+            Name of the column whose data will be used for visualization, column
+            that will be used should hold numeric values because we can’t create
+            range from non-numeric values [ columnName provided should exist in
+            the dataset]
+          type: string
+          example: population
+        opacity:
+          description: >-
+            Opacity of the features ranging from 0-1 | if not provided, then a
+            default value is taken
+          type: number
+          example: 0.5
+        color:
+          description: >-
+            Hex color without '#' of the symbols | If not provided a random
+            color is assigned
+          type: string
+          example: 551cb8
+        borderColor:
+          description: >-
+            Hex color without '#' of the border of symbols | If not provided a
+            '#000000' color is assigned
+          type: string
+          example: 28085e
+        borderWidth:
+          description: >-
+            Width of the border of symbols in pixel | If not provided 1px is
+            assigned
+          type: integer
+          example: 2
+        borderOpacity:
+          description: >-
+            Opacity of the border of symbols ranges from 0-1 | If not provided a
+            1 is assigned
+          type: number
+          example: 0.7
+        minValue:
+          description: >-
+            Starting value of the range(if not provided, can be taken as
+            smallest value of the column in the dataset) | range for
+            interpolation will have this as initial value [minValue can't be
+            greater than maxValue]
+          type: number
+          example: 10000
+        maxValue:
+          description: >-
+            Ending value of the range(if not provided, can be taken as largest
+            value of the column in the dataset) | range for interpolation will
+            have this as final value [minValue can't be greater than maxValue]
+          type: number
+          example: 500000
+        steps:
+          description: >-
+            number of size of symbols in which data will be divided(if not
+            provided, can be taken as 10) [max:15]
+          type: integer
+          example: 5
+        factor:
+          description: >-
+            This is the number of pixels that will be added to minSize for each
+            step of the range | If not provided calculated using 'minSize' and
+            'maxSize' parameter | styleJSON should either have this value
+            defined or 'maxSize' parameter
+          type: number
+          example: 2
+        minSize:
+          description: >-
+            minimum size of the symbols(can be taken as 6 if not provided by the
+            user) [should be numeric and greater than 3]
+          type: integer
+          example: 8
+        maxSize:
+          description: >-
+            maximum size of the symbols | If 'factor' parameter is defined then
+            this parameter is not necessary as the maximmum size will be
+            determined by 'factor' and 'steps' | 'factor' and 'maxSize' both are
+            defined in styleJSON then 'factor' in given precendence over
+            'maxSize' [should be numeric and less than 65]
+          type: integer
+          example: 32
+        marker:
+          description: >-
+            the type of marker in graduated style, can have the following values
+            => [circle | square | triangle | star | cross | x] OR
+            ttf://<FONT_NAME>#0x<SYMBOL_HEXCODE> Example => ttf://Webdings#0x68
+          type: integer
+          example: triangle
+      required:
+        - columnName
+    styleJSONHeatAttr:
+      title: styleJSON for Heat (attribute based) style
+      type: object
+      properties:
+        columnName:
+          description: >-
+            Name of the column whose data will be used for visualization, column
+            that will be used should hold numeric values because we can’t create
+            range from non-numeric values [columnName provided should exist in
+            dataset]
+          type: string
+          example: population
+        geomType:
+          description: Type of geometry that you want to visualize (point/line/polygon)
+          type: string
+          example: point
+        marker:
+          description: >-
+            type of marker for point features [default value => circle], can
+            have the following values => [circle | square | triangle | star |
+            cross | x] OR ttf://<FONT_NAME>#0x<SYMBOL_HEXCODE>
+          type: string
+          example: triangle
+        size:
+          description: >-
+            In case the geometry is point type(if not provided, can be taken as
+            9) [should be numeric and should not less than 6 and should not be
+            greater than 32] 
+          type: number
+          example: 12
+        opacity:
+          description: >-
+            Opacity of the features ranging from 0-1 | if not provided, then a
+            default value of 0.8 is taken
+          type: number
+          example: 0.5
+        colors:
+          description: >-
+            The colors that will be used to create ramp of colors for different
+            range of data, user can input maximum of 5 colors in an array,
+            colors should be hex color codes without ‘#’(if not provided, 2
+            random color will be taken to create color ramp)
+          type: array
+          items:
+            type: string
+          example:
+            - fff200
+            - ff0000
+        borderColor:
+          description: >-
+            Hex color without '#' of the border of bubbles | If not provided a
+            '#000000' color is assigned
+          type: string
+          example: 28085e
+        borderWidth:
+          description: >-
+            Width of the border of bubbles in pixel | If not provided 1px is
+            assigned
+          type: integer
+          example: 2
+        borderOpacity:
+          description: >-
+            Opacity of the border of bubbles ranges from 0-1 | If not provided a
+            1 is assigned
+          type: number
+          example: 0.7
+        polygonfillcolor:
+          description: hex color without '#' of the polygon/s
+          example: f2e824
+          type: string
+        polygonfillopacity:
+          description: opacity of polygon/s ranging from 0-1
+          example: 0.7
+          type: string
+        polygonType:
+          description: >-
+            it signifies what kind of fill should be used, can have the
+            following values => simple, circle, hatchfill [default = simple]
+          example: hatchfill
+          type: string
+        polygongraphicbordercolor:
+          description: >-
+            sets the color of graphic border if graphic is being used in the
+            fill pattern
+          example: 161617
+          type: string
+        polygongraphicborderwidth:
+          description: >-
+            this can be used to define the width of the border of graphic used,
+            in case of polygonType = "hatchfill" this param can be used to
+            increase the width of the pattern used in hatchfill
+          example: 1
+          type: string
+        polygongraphicborderopacity:
+          description: >-
+            this can be used to define the opacity of the border of graphic
+            ranging from 0-1
+          example: 0.7
+          type: string
+        polygonGraphicSize:
+          description: >-
+            sets the size of graphic in pixels if it is being used in the fill
+            pattern, for example in lineType **circle**, *polygonGraphicSize*
+            can be used to set size of circle
+          example: 10
+          type: string
+        linestrokecolor:
+          description: hex color without '#' of the line/s
+          example: 2ce622
+          type: string
+        linestrokewidth:
+          description: >-
+            width of the line/s in pixels [**linestrokewidth should be greater
+            than zero and should be less than 13**]
+          example: 2
+          type: string
+        linestrokeopacity:
+          description: opacity of line/s ranging from 0-1
+          example: 0.5
+          type: string
+        lineType:
+          description: >-
+            it signifies what kind of line should be used, can only have the
+            following values => **simple line, dashed line, dotted line,
+            railroad, crossroad, xroad, vertline, slash, backslash**
+          example: simple line
+          type: string
+        lineGraphicSize:
+          description: >-
+            sets the size of graphic in pixels if it is being used in the line
+            pattern, for example in lineType dotted line, lineGraphicSize can be
+            used to set size of circle or dots
+          example: 4
+          type: string
+        lineGraphicSpacing:
+          description: >-
+            this can be used to define the space between the repeating pattern
+            in line
+          example: 4
+          type: string
+        lineGraphicFillColor:
+          description: >-
+            this can be used to set the color of the graphic that is being used
+            as a pattern in line, not applicable in simple and dashed line
+          example: c8c9cc
+          type: string
+        minValue:
+          description: >-
+            Starting value of the range(if not provided, can be taken as
+            smallest value of the column in the dataset) | range for
+            interpolation will have this as initial value [minValue can't be
+            greater than or equal to maxValue]
+          type: number
+          example: 10000
+        maxValue:
+          description: >-
+            Ending value of the range(if not provided, can be taken as largest
+            value of the column in the dataset) | range for interpolation will
+            have this as final value [minValue can't be greater than or equal to
+            maxValue]
+          type: number
+          example: 500000
+        steps:
+          description: >-
+            Number of colors in a color ramp  in which data will be divided(if
+            not provided, can be taken as 10) [steps can't be greater than 20]
+          type: integer
+          example: 12
+      required:
+        - columnName
+        - geomType
+    styleJSONChart:
+      title: styleJSON for chart style
+      type: object
+      properties:
+        chartType:
+          description: >-
+            Type of chart that needs to be created (can only have the following
+            values => [pie_chart,
+            pie_chart_3d,bar_chart_vertical,bar_chart_horizontal])
+          type: string
+          example: pie_chart
+        dividendColumns:
+          description: >-
+            The array of columns that needs to be considered to create chart.
+            Atleast 2 columns should be provided to create chart.[column names
+            provided in dividendColumns should exist in dataset]
+          type: array
+          items:
+            type: string
+          example:
+            - Male_Population
+            - Female_Population
+        width:
+          description: >-
+            width of the chart image in pixels (there are chances if value is
+            lesser then chart may be cropped) {Please note that the resolution
+            I.e. width * height of the chart image should not exceed 300000
+            pixels}
+          type: number
+          example: 200
+        height:
+          description: >-
+            height of the chart image in pixels (there are chances if value is
+            lesser then chart may be cropped) {Please note that the resolution
+            I.e. width * height of the chart image should not exceed 300000
+            pixels}
+          type: number
+          example: 100
+        legends:
+          type: object
+          properties:
+            useLegends:
+              description: States whether to use legends or not
+              type: boolean
+              example: true
+            legendValues:
+              description: Values that will be used as legends
+              type: array
+              items:
+                type: string
+              example:
+                - Male Population
+                - Female Population
+        labels:
+          type: object
+          properties:
+            useLables:
+              description: States whether to use labels or not
+              type: boolean
+              example: true
+            labelValues:
+              description: Values that will be used as labels
+              type: array
+              items:
+                type: string
+              example:
+                - Male Population
+                - Female Population
+        colors:
+          description: >-
+            should be an array of hex color codes without ‘#’. Number of
+            elements means different approaches. <ul><li>If empty array is
+            provided then a random color is taken to create shades for each
+            value in chart(in pie-chart)[*In bar-charts one random color will be
+            used for all the values in the chart*].</li> <li>If one color is
+            provided then that color is used to create shades of each value in
+            chart(in pie-chart)[*In bar-charts that one color will be used for
+            all the values in the chart*]. </li><li>If 2 values are provided
+            then colors are interpolated between those 2 colors(in
+            pie-chart)[*In bar-charts those two color will be repeated for all
+            the values in the chart*]. </li><li>If more than 2 colors are
+            provided then each color is taken for each value in the chart
+            therefore in such cases the number of colors provided should be
+            equal to number of dividend columns to avoid repeated colors for
+            same value.</li></ul>
+          type: array
+          items:
+            type: string
+          example:
+            - fff200
+            - ff0000
+        divisorColumn:
+          description: >-
+            The column name which contains the aggregated values of the dividend
+            Columns (if not provided then all the dividend columns are added to
+            create it’s value)].Column should be of integer or floating values.
+            [column name provided in divisor Column should exist in dataset]
+          type: string
+          example: Total Population
+      required:
+        - chartType
+        - dividendColumns
+        - width
+        - height
+        - legends
+        - labels
+        - colors
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []

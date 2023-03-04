@@ -1,0 +1,583 @@
+openapi: 3.0.1
+info:
+  title: SAT API (Save Append Truncate)
+  description: >-
+    *SAT API is responsible for adding the datasets in different formats to the
+    mGIS engine with some default style so that datasets can be visualized on
+    mGIS platform. It also provide the functionality to create subsets from the
+    already existing datasets.*  <ul> <li><b>Features</b>  <ul> <li>Supports
+    multiple formats for dataset such as <ul> <li>GEOJSON</li> <li>KML</li>
+    <li>CSV</li> <li>XLSX</li> <li>XLS</li> <li>SHP</li> <li>XLSM</li>
+    <li>XLT</li> <li>XLTX</li> </ul> </li> <li> Let the users create subsets
+    from their pre-existing dataset so that further be manipulated according to
+    user's need </li> </ul> </li> </ul> <br> <hr> <br> <p>
+    ![MapmyIndialogo](https://www.mapmyindia.com/api/img/mapmyindia-api.png) On
+    a Mission to  <b>"Make our world better through maps, location technologies
+    & IoT" </b>, MapmyIndia is continuously enabling real time hyper-local
+    information access through its map & location services. mGIS APIs are a part
+    of mGIS platform and the document describes APIs usage and specifications
+    for their integration into an application. The document covers : </p> <ul>
+    <li>List of APIs along with use cases</li> <li>Explanation of resources and
+    query parameters</li> <li>Listing of response structure and data type</li>
+    </ul>
+
+    ## Important notes
+
+    <ul> <li>  <b>URLs</b>: the urls to use for UAT and Production are:  <ul>
+    <li> <b>Production</b>:<code>https://mgis-api.mappls.com/</code>  </li>
+    <li>To call our API, the endpoint requires access-token authorization and
+    the <code>access-token</code> needs to be . For example
+    <code>https://mgis-api.mappls.com/example </code>Pass header as
+    <code>Authorization:Bearer access_token</code> </li> </ul> </li> <li>For any
+    issues or questions please submit it to our support : <a
+    href="mailto:apisupport@mappls.com" target="_blank">API Support</a>.If
+    you have some non-technical or commercial queries, contact your service
+    account manager </li> </ul>
+    <p><a href="./index.html"><img src="./images/homebutton.png" height="40"/></p>
+  contact:
+    name: MapmyIndia API Support
+    url: https://about.mappls.com/contact/
+    email: apisupport@mappls.com
+  termsOfService: https://about.mappls.com/about/privacy-policy
+  version: V1.0.0
+  license:
+    name: Revised BSD-3 Clause
+    url: https://github.com/mappls-api/
+tags:
+  - name: SAT API
+    description: ''
+servers:
+  - url: https://mgis-api.mappls.com/
+    description: Production server for mGIS APIs
+paths:
+  /updateFeature:
+    post:
+      tags:
+        - SAT API
+      summary: Updates a single or multiple features with the updated values provided.
+      description: >-
+        Updates the a feature or multiple features with the updated values
+        provided.
+      operationId: UpdateFeature
+      parameters:
+        - $ref: '#/components/parameters/datasetNme'
+        - $ref: '#/components/parameters/updatedValues'
+        - $ref: '#/components/parameters/filter'
+        - $ref: '#/components/parameters/featureID'
+        - $ref: '#/components/parameters/replaceAll'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/updateFeatureResponse'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject'
+        '500':
+          description: Internal Server Error, the request caused an error in our systems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /deleteFeature:
+    delete:
+      tags:
+        - SAT API
+      summary: Deletes the feature from the featureList.
+      description: >-
+        Deletes the feature from the featureList on the basis of the filter
+        value or the featureID value provided by the user.
+      operationId: DeleteFeature
+      parameters:
+        - $ref: '#/components/parameters/datasetNme'
+        - $ref: '#/components/parameters/filter'
+        - $ref: '#/components/parameters/featureID'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/deleteFeatureResponse'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject'
+        '500':
+          description: Internal Server Error, the request caused an error in our systems.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+components:
+  parameters:
+    DatasetNme:
+      name: datasetNme
+      in: query
+      description: dataset Name.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+        example: test
+    propertyNames:
+      name: propertyNames
+      in: query
+      description: Names of columns that are required in the copy dataset.
+      schema:
+        type: string
+        example: district,state,hospital,literacy
+    newPropertyList:
+      name: newPropertyList
+      in: query
+      description: Names of new columns that need to be added in the copy dataset.
+      schema:
+        type: string
+        example: >-
+          {"items":[{"propertyName":"name1","propertyType":"text"},{"propertyName":"name2","propertyType":"text","defaultValue":"shsh"}]}
+    operation:
+      name: operation
+      in: query
+      description: only two possible operation add or delete.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+        example: add
+    updateColumns:
+      name: updateColumns
+      in: query
+      description: >-
+        an array of objects which contain column name , its type and default
+        value. example [{"name":"id","type":"int","defaultValue":55}]
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+        example: '[{"name":"id","type":"int","defaultValue":55}]'
+    datasetNme:
+      name: datasetNme
+      in: query
+      description: dataset name
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: a01072020
+    updatedValues:
+      name: updatedValues
+      in: query
+      description: >-
+        Array of objects containing properties and their values to be updated in
+        a feature (any one filter or featureID or replaceAll must be passed
+        along with updatedValues).
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+        example: '[{"propertyName":"parentcate","newValue":"6"}]'
+    filter:
+      name: filter
+      in: query
+      description: filter value
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id=34801
+    featureID:
+      name: featureID
+      in: query
+      description: >-
+        unique feature id to delete the particular feature id. featureID can
+        take input multiple values which should be comma separated.It can delete
+        multiple feature.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: a01072020.55,a01072020.60,a01072020.57
+    replaceAll:
+      name: replaceAll
+      in: query
+      description: >-
+        valueless parameter to replace all the features with the updated values
+        provided.No value is required to be passed in replaceAll.
+      required: false
+      allowEmptyValue: true
+      schema:
+        type: string
+  requestBodies:
+    updatedGeom:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              geometry:
+                type: object
+                properties:
+                  coordinates:
+                    description: >-
+                      updated geomtery coordinates.<br><br>Case-1 multipoint
+                      {"geometry":{"coordinates":[500000,54505678]}}</br><br>Case-2
+                      multipolygon
+                      {"geometry":{"coordinates":[[[76.55555,24.046464],[76.552734,28.844674],[83.056641,28.844674],[83.056641,24.046464],[76.55555,24.046464]]]}}</br><br>Case-3
+                      multiline
+                      {"geometry":{"coordinates":[[500000,54505678],[0,540000],[5450000,0]]}}
+          example:
+            geometry:
+              coordinates:
+                - - 500000
+                  - 54505678
+                - - 0
+                  - 540000
+                - - 5450000
+                  - 0
+    objSave:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              datasetNme:
+                description: >-
+                  Name of the dataset that will be used while
+                  saving/appending/truncating
+                example: test
+                type: string
+              geoJSON:
+                description: >-
+                  String representation of GEOJSON object that you want to save
+                  as a dataset
+                type: string
+                example: >-
+                  { "type": "FeatureCollection", "features": [ { "type":
+                  "Feature", "properties": {}, "geometry": { "type": "Point",
+                  "coordinates": [ 80.1727294921875, 27.581329075043357 ] } }, {
+                  "type": "Feature", "properties": {}, "geometry": { "type":
+                  "Point", "coordinates": [ 78.848876953125, 26.711266913515747
+                  ] } }, { "type": "Feature", "properties": {}, "geometry": {
+                  "type": "Point", "coordinates": [ 81.309814453125,
+                  26.23430203240673 ] } }, { "type": "Feature", "properties":
+                  {}, "geometry": { "type": "Point", "coordinates": [
+                  79.1015625, 25.596948323286135 ] } }, { "type": "Feature",
+                  "properties": {}, "geometry": { "type": "Polygon",
+                  "coordinates": [ [ [ 80.4473876953125, 27.332735136859146 ], [
+                  79.881591796875, 27.176469131898898 ], [ 79.73876953125,
+                  27.029770731463536 ], [ 79.85412597656249, 26.544308558627424
+                  ], [ 80.1727294921875, 26.249083096330665 ], [ 80.8154296875,
+                  26.80446076654616 ], [ 80.4473876953125, 27.332735136859146 ]
+                  ] ] } }, { "type": "Feature", "properties": {}, "geometry": {
+                  "type": "LineString", "coordinates": [ [ 76.66259765625,
+                  26.31311263768267 ], [ 77.71728515624999, 25.16517336866393 ],
+                  [ 79.1455078125, 24.647017162630366 ], [ 80.771484375,
+                  25.005972656239187 ] ] } }, { "type": "Feature", "properties":
+                  {}, "geometry": { "type": "LineString", "coordinates": [ [
+                  77.7392578125, 27.410785702577023 ], [ 79.43115234375,
+                  29.05616970274342 ], [ 82.24365234375, 29.094577077511826 ] ]
+                  } }, { "type": "Feature", "properties": {}, "geometry": {
+                  "type": "LineString", "coordinates": [ [ 74.77294921875,
+                  21.453068633086783 ], [ 74.72900390625, 22.59372606392931 ], [
+                  75.1904296875, 22.207749178410847 ], [ 75.849609375,
+                  22.63429269379353 ], [ 75.89355468749999, 21.57571893245848 ]
+                  ] } }, { "type": "Feature", "properties": {}, "geometry": {
+                  "type": "LineString", "coordinates": [ [ 77.2119140625,
+                  22.79643932091949 ], [ 76.552734375, 22.63429269379353 ], [
+                  76.31103515625, 22.14670778001263 ], [ 76.37695312499999,
+                  21.57571893245848 ], [ 76.88232421875, 21.43261686447735 ], [
+                  77.431640625, 21.3303150734318 ], [ 77.431640625,
+                  22.004174972902003 ], [ 76.9482421875, 22.004174972902003 ] ]
+                  } }, { "type": "Feature", "properties": {}, "geometry": {
+                  "type": "LineString", "coordinates": [ [ 77.80517578125,
+                  22.79643932091949 ], [ 78.92578124999999, 22.87744046489713 ],
+                  [ 78.28857421875, 22.79643932091949 ], [ 78.33251953125,
+                  21.759499730719817 ], [ 77.82714843749999, 21.69826549685252
+                  ], [ 78.99169921875, 21.759499730719817 ] ] } }, { "type":
+                  "Feature", "properties": {}, "geometry": { "type":
+                  "LineString", "coordinates": [ [ 80.22216796875,
+                  22.695120184965695 ], [ 79.7607421875, 22.998851594142913 ], [
+                  79.40917968749999, 22.553147478403194 ], [ 80.0244140625,
+                  22.105998799750566 ], [ 80.15625, 21.657428197370653 ], [
+                  79.6728515625, 21.4121622297254 ], [ 79.365234375,
+                  21.820707853875017 ] ] } } ] }
+              appendStatus:
+                description: >-
+                  If set to true, the geoJSON provided will be appended to
+                  pre-existing data within the dataset of name provided in
+                  datasetNme param [condition is that the data should exist /
+                  **no need to set it to false in case of non-appending**]
+                type: string
+              truncateStatus:
+                description: >-
+                  If set to true, the geoJSON provided will be appended and
+                  pre-existing data within the dataset of name provided in
+                  datasetNme param will be truncated/deleted [condition is that
+                  the data provided should be of same structure OR should
+                  contain previous structure else there can be loss of
+                  information / **no need to set it to false**]
+                type: string
+              polygonfillcolor:
+                description: hex color without '#' of the polygon/s
+                example: f2e824
+                type: string
+              polygonfillopacity:
+                description: opacity of polygon/s ranging from 0-1
+                example: 0.7
+                type: string
+              linestrokecolor:
+                description: hex color without '#' of the line/s
+                example: 2ce622
+                type: string
+              linestrokewidth:
+                description: width of the line/s in pixels
+                example: 2
+                type: string
+              linestrokeopacity:
+                description: opacity of line/s ranging from 0-1
+                example: 0.5
+                type: string
+              pointfillcolor:
+                description: hex color without '#' of the point/s
+                example: '2266e3'
+                type: string
+              pointfillopacity:
+                description: opacity of point/s ranging from 0-1
+                example: 0.8
+                type: string
+              pointsize:
+                description: size of point/s in pixels
+                example: 10
+                type: string
+            required:
+              - datasetNme
+              - geoJSON
+    fileSave:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              datasetNme:
+                description: >-
+                  Name of the dataset that will be used while
+                  saving/appending/truncating [If not provided **filename** is
+                  taken as datasetNme]
+                example: test
+                type: string
+              file:
+                description: >-
+                  File that data contains data that needs to be
+                  published/appended [max size: 20 MB]
+                type: string
+                format: binary
+              sheetName:
+                description: >-
+                  Name of the sheet incase the file is one of the spreadsheet
+                  formats [If not provided first sheet of the document is taken
+                  by default]
+                type: string
+              lat:
+                description: >-
+                  Name of the column containing latitude incase the file is one
+                  of the spreadsheet formats [If not provided '**Lat**' is taken
+                  by default]
+                type: string
+              lng:
+                description: >-
+                  Name of the column containing longitude incase the file is one
+                  of the spreadsheet formats [If not provided '**Lng**' is taken
+                  by default]
+                type: string
+              appendStatus:
+                description: >-
+                  If set to true, the file provided will be appended to
+                  pre-existing data within the dataset of name provided in
+                  datasetNme param [condition is that the data should exist /
+                  **no need to set it to false in case of non-appending**]
+                type: string
+              truncateStatus:
+                description: >-
+                  If set to true, the file provided will be appended and
+                  pre-existing data within the dataset of name provided in
+                  datasetNme param will be truncated/deleted [condition is that
+                  the data provided should be of same structure OR should
+                  contain previous structure else there can be loss of
+                  information / **no need to set it to false**]
+                type: string
+              polygonfillcolor:
+                description: hex color without '#' of the polygon/s
+                example: f2e824
+                type: string
+              polygonfillopacity:
+                description: opacity of polygon/s ranging from 0-1
+                example: 0.7
+                type: string
+              linestrokecolor:
+                description: hex color without '#' of the line/s
+                example: 2ce622
+                type: string
+              linestrokewidth:
+                description: width of the line/s in pixels
+                example: 2
+                type: string
+              linestrokeopacity:
+                description: opacity of line/s ranging from 0-1
+                example: 0.5
+                type: string
+              pointfillcolor:
+                description: hex color without '#' of the point/s
+                example: '2266e3'
+                type: string
+              pointfillopacity:
+                description: opacity of point/s ranging from 0-1
+                example: 0.8
+                type: string
+              pointsize:
+                description: size of point/s in pixels
+                example: 10
+                type: string
+            required:
+              - file
+    subsetSave:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              datasetNme:
+                description: >-
+                  Name of the parent dataset which will be used to create
+                  sub-dataset
+                type: string
+              newDatasetNme:
+                description: >-
+                  Name of the sub-dataset which will be created from parent
+                  dataset
+                type: string
+              filter:
+                description: WHERE clause which filters the parent dataset
+                type: string
+                example: id > 20
+              properties:
+                description: >-
+                  Comma separated name of the columns that will be used to
+                  create sub-dataset [If not provided **all the column will be
+                  used** by default]
+                type: string
+                example: column1,column2,column3
+              polygonfillcolor:
+                description: hex color without '#' of the polygon/s
+                example: f2e824
+                type: string
+              polygonfillopacity:
+                description: opacity of polygon/s ranging from 0-1
+                example: 0.7
+                type: string
+              linestrokecolor:
+                description: hex color without '#' of the line/s
+                example: 2ce622
+                type: string
+              linestrokewidth:
+                description: width of the line/s in pixels
+                example: 2
+                type: string
+              linestrokeopacity:
+                description: opacity of line/s ranging from 0-1
+                example: 0.5
+                type: string
+              pointfillcolor:
+                description: hex color without '#' of the point/s
+                example: '2266e3'
+                type: string
+              pointfillopacity:
+                description: opacity of point/s ranging from 0-1
+                example: 0.8
+                type: string
+              pointsize:
+                description: size of point/s in pixels
+                example: 10
+                type: string
+            required:
+              - datasetNme
+              - newDatasetNme
+  schemas:
+    ErrorObject:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+          example: 400
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Mandatory parameters missing.
+    ErrorObject401:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Authorization Unsuccessful
+    ErrorObject500:
+      title: ErrorObject
+      type: object
+      properties:
+        code:
+          type: string
+          example: 500
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Something went wrong.
+    updateFeatureResponse:
+      title: UpdateFeature Response
+      type: object
+      properties:
+        code:
+          type: string
+          example: 200
+        message:
+          type: string
+          description: >-
+            If everything goes ok then user receives a message indicating that
+            the columns specified by the user in the updatedValues have been
+            updated.
+          example: Columns Updated.
+    deleteFeatureResponse:
+      title: DeleteFeature Response
+      type: object
+      properties:
+        code:
+          type: string
+          example: 200
+        message:
+          type: string
+          description: >-
+            If everything goes ok then user receives a message indicating that
+            the columns specified by the user in the updatedValues have been
+            updated.
+          example: Feature deleted.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []

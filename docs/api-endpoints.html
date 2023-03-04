@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>mGIS APIs for PayTM OCL</title>
+<title>api-endpoints.md</title>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
 <style>
@@ -366,21 +366,24 @@ code {
     });
   </script>
 <p><a href="https://about.mappls.com/api"><img src="https://about.mappls.com/images/mappls-logo.svg" height="60"/> </p></a></p>
-<h1 id="mgis-apis">mGIS APIs</h1>
-<h2 id="introduction">Introduction</h2>
-<p>Using these APIs developers can fully leverage and embed the power of GeoSpatial Analytics, GIS and location intelligence and AI. These APIs allow a developer to integrate into their own application the power and full set of functionalities of the mGIS product and platform.</p>
-<h2 id="how-mappls-ai-apis-enhance-value-of-any-solution">How mGIS APIs Enhance Value of any Solution</h2>
-<p>mGIS can serve different types of customers on the basis of the type of analytics OR on the basis of the type of datasets they possess. E.g. a user who has a non spatial address dataset wants to upload on mGIS and perform geospatial visualization and queries.</p>
-
-<h2 id="api-features">API Features</h2>
-<p>mGIS APIs are grouped under various categories providing wide range of functionalities which can be leveraged by enterprise and consumer</p>
+<h1 id="api-endpoints">API Endpoints</h1>
+<h2 id="predict">Predict</h2>
 <ul>
-<li><a href="./swagger.html?urls.primaryName=Data%20Query%20%26%20Validation%20APIs">Data Query & Validation APIs</a></li>
-<li><a href="./swagger.html?urls.primaryName=Map%20Visualization%20APIs">Map Visualization APIs</a></li>
-<li><a href="./swagger.html?urls.primaryName=SAT%20(Save%2FAppend%2FTruncate)%20APIs">SAT (Save/Append/Truncate) APIs</a></li>
-<li><a href="./swagger.html?urls.primaryName=Styling%20APIs">Styling APIs</a></li>
+<li>Use <code>/predict</code> endpoint to get the 2D bounding box and polygon of prediction as JSON response</li>
+<li>Use <code>/predict/polygon</code> endpoint to get only the polygon of prediction as JSON response</li>
 </ul>
-
+<h2 id="models">Models</h2>
+<ul>
+<li>Use <code>/models</code> endpoint to get the details of all the models</li>
+<li>Use <code>/models/&lt;api_model_key&gt;</code> endpoint to get the details of specific model</li>
+</ul>
+<h2 id="server">Server</h2>
+<ul>
+<li>Use <code>/server/whoami</code> endpoint to know which model is live</li>
+</ul>
+<br>
+<p><a href="../index.html">
+	<img src="../images/homebutton.png" height="40"/></p>
 <br>
 <p>For any queries and support, please contact:</p>
 <p><a href="https://about.mappls.com/api/"><img src="https://about.mappls.com/images/mappls-logo.svg" height="40"/> </p></a>

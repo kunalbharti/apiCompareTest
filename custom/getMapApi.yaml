@@ -1,0 +1,568 @@
+openapi: 3.0.1
+info:
+  title: Get Map and Get FeatureInfo API
+  description: >-
+    *Get Map API is a unified API that will provide the following
+    functionality:* <ul><li>Fetch maptiles of the dataset name of a bounding
+    box.</li> <li>Fetch feature information of the dataset name of a bounding
+    box.</li> <li>Fetch maptiles of the queried layers between 2 datasets.</li>
+    <li> Fetch maptiles of the geometric function performed on single
+    dataset.</li> </ul><br><br><hr><br>![MapmyIndia
+    logo](https://www.mapmyindia.com/api/img/mapmyindia-api.png)
+
+
+    On a Mission to <b>"Make our world better through maps, location
+    technologies & IoT"</b>, MapmyIndia is continuously enabling real time
+    hyper-local information access through its map & location services. mGIS
+    APIs are a part of mGIS platform and the document describes APIs usage and
+    specifications for their integration into an application. The document
+    covers :
+
+    <ul><li>List of APIs along with use cases</ul></li> 
+
+    <ul><li>Explanation of resources and query parameters</ul></li>
+
+    <ul><li>Listing of response structure and data type</ul></li>
+
+
+    ## Important notes
+     <ul><li><b>URLs</b>: the urls to use for UAT and Production are:  <ul><li>
+     <b>Production</b>:
+    <code>https://mgis-api.mappls.com/</code></li>       <li> To call our API for for <b>/getMap route and /getLayerJoin route</b>, the endpoint requires access-token authorization and the <code>access_token</code> needs to be passed. For example <code>https://mgis-api.mappls.com/getMap </code> <br> Pass query parameter as <code>access_token: Bearer access_token</code>   </li> <li> To call our API for for <b>/getFeatureInfo route</b>, the endpoint requires access-token authorization and the <code>access_token</code> needs to be passed. For example <code>https://mgis-api.mappls.com/getFeatureInfo </code> <br> Pass header as <code>Authorization: Bearer access_token</code>   </li></ul> <li>For any issues or questions please submit it to our support : <a href="mailto:apisupport@mappls.com" target="_blank">API Support</a>.  If you have some non-technical or commercial queries, contact your service account manager</li></ul>
+     <p><a href="./index.html"><img src="./images/homebutton.png" height="40"/></p>
+  contact:
+    name: MapmyIndia API Support
+    url: https://about.mappls.com/contact/
+    email: apisupport@mappls.com
+  termsOfService: https://about.mappls.com/about/privacy-policy
+  version: V1.0.0
+  license:
+    name: Revised BSD-3 Clause
+    url: https://github.com/mappls-api/
+tags:
+  - name: Get Map and Get Feature Info API
+    description: >-
+      Get Map API is used to provide maptiles of the dataset name of a bounding
+      box and feature information of the dataset name of a bounding box.
+servers:
+  - url: https://mgis-api.mappls.com/
+    description: Production server for mGIS APIs
+paths:
+  /getMap:
+    get:
+      tags:
+        - Get Map and Get Feature Info API
+      summary: Fetches the maptiles of the dataset name of a bounding box.
+      description: Fetches the maptiles of the dataset name of a bounding box in response.
+      operationId: getMapId
+      parameters:
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/heightParam'
+        - $ref: '#/components/parameters/widthParam'
+        - $ref: '#/components/parameters/bboxParam'
+        - $ref: '#/components/parameters/accesstokenParam'
+        - $ref: '#/components/parameters/queryTypeSingleParam'
+        - $ref: '#/components/parameters/comparisonFunctionSingleParam'
+        - $ref: '#/components/parameters/comparisonOperatorSingleParam'
+        - $ref: '#/components/parameters/comparisonValueSingleParam'
+        - $ref: '#/components/parameters/transparentParam'
+        - $ref: '#/components/parameters/envParam'
+        - $ref: '#/components/parameters/cql_filterParam'
+        - $ref: '#/components/parameters/srsParam'
+        - $ref: '#/components/parameters/styleParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+  /getFeatureInfo:
+    get:
+      tags:
+        - Get Map and Get Feature Info API
+      summary: Fetches the feature information.
+      description: Fetches the feature information of the dataset name of a bounding box.
+      operationId: getFeatureInfoId
+      parameters:
+        - $ref: '#/components/parameters/datasetNmeParam'
+        - $ref: '#/components/parameters/xParam'
+        - $ref: '#/components/parameters/yParam'
+        - $ref: '#/components/parameters/heightParam'
+        - $ref: '#/components/parameters/widthParam'
+        - $ref: '#/components/parameters/bboxParam'
+        - $ref: '#/components/parameters/transparentParam'
+        - $ref: '#/components/parameters/srsParam'
+        - $ref: '#/components/parameters/styleParam'
+        - $ref: '#/components/parameters/bufferParam'
+        - $ref: '#/components/parameters/cql_filterParamfeature'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFeatureInfoRes'
+        '400':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject400'
+        '401':
+          description: Unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '404':
+          description: No data found in database.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '422':
+          description: Parameter missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObjectCommon'
+        '500':
+          description: Bad Request, User made an error while creating a valid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorObject500'
+      deprecated: false
+components:
+  parameters:
+    queryTypeParam:
+      name: queryType
+      in: query
+      description: The queryType can be 'basic' or 'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: basic
+    datasetNmeParam:
+      name: datasetNme
+      in: query
+      description: The datasetNme of whose maptiles has to be fetched.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: india
+    datasetSourceParam:
+      name: datasetSource
+      in: query
+      description: >-
+        The datasetNme of whose maptiles has to be fetched. It is mandatory both
+        in case of queryType 'basic' as well as queryType 'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: india
+    datasetRefParam:
+      name: datasetRef
+      in: query
+      description: >-
+        The datasetNme of whose maptiles has to be fetched. It is mandatory in
+        case of queryType 'basic' as well as for queryType 'spatialOperation' in
+        case of performing the operation between 2 datsets.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: geo
+    transparentParam:
+      name: transparent
+      in: query
+      description: To set the transparency of the maptiles.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 'true'
+    heightSpatialParam:
+      name: height
+      in: query
+      description: >-
+        To set the height of the maptiles. It is mandatory both in case of
+        queryType 'basic' as well as queryType 'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 256
+    heightParam:
+      name: height
+      in: query
+      description: To set the height of the maptiles.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 256
+    widthParam:
+      name: width
+      in: query
+      description: To set the width of the maptiles.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 256
+    widthSpatialParam:
+      name: width
+      in: query
+      description: >-
+        To set the width of the maptiles. It is mandatory both in case of
+        queryType 'basic' as well as queryType 'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 256
+    sourcePropertyParam:
+      name: sourceProperty
+      in: query
+      description: >-
+        Source property on which the user wants to fetch the result. It is
+        mandatory in case of queryType 'basic'
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id
+    refPropertyParam:
+      name: refProperty
+      in: query
+      description: >-
+        Reference property on which the user wants to fetch the result. It is
+        mandatory in case of queryType 'basic'
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: id
+    operatorParam:
+      name: operator
+      in: query
+      description: >-
+        Operators acceptable for queryType <b>'basic'</b> are: <li><=, >=, =, <,
+        >, <>, IN and NOT IN</li> <br> Operators acceptable for queryType
+        <b>'spatialOperation'</b> are: <li>Intersects, Disjoint, Overlaps,
+        Equals, Touches, DWithin, Within, Contains and Crosses </li><br> It is
+        mandatory both in case of queryType 'basic' as well as queryType
+        'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '='
+    userGeomParam:
+      name: userGeom
+      in: query
+      description: >-
+        Value of UserGeom will be 'true' if user wants to perform geometric
+        operations with user-defined geometry. It is mandatory in case of
+        queryType 'spatialOperation' for userDefined geometry.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 'true'
+    geomParam:
+      name: geom
+      in: query
+      description: >-
+        User defined geometry will be of geoJSON format. It will contain the
+        geometry key-value part of the geojson. The geojson should contain the
+        coordinates in <b>[lon, lat] format</b>. It is mandatory in case of
+        queryType 'spatialOperation' for userDefined geometry.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: >-
+        { "type": "Polygon", "coordinates":
+        [[[74.02587890625,21.739091217718574],[77.71728515624999,21.739091217718574],[77.71728515624999,25.20494115356912],[74.02587890625,25.20494115356912],[74.02587890625,21.739091217718574]]]}
+    distance:
+      name: distance
+      in: query
+      description: Distance is only required when the operator is <b>DWITHIN</b>.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 10
+    bboxParam:
+      name: bbox
+      in: query
+      description: >-
+        Defines the set of substitution values that can be used in SLD variable
+        substitution.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 7514065.628545968,2504688.542848655,8766409.899970295,3757032.8142729844
+    bboxSpatialParam:
+      name: bbox
+      in: query
+      description: >-
+        Defines the set of substitution values that can be used in SLD variable
+        substitution. It is mandatory both in case of queryType 'basic' as well
+        as queryType 'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: 7514065.628545968,2504688.542848655,8766409.899970295,3757032.8142729844
+    styleParam:
+      name: style
+      in: query
+      description: To pass the style of the maptiles.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+    cql_filterParam:
+      name: cql_filter
+      in: query
+      description: >-
+        To pass the cql_filter for fetching the filtered maptiles. This is an
+        optional paramter when queryType = 'functionBased' is passed.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: name = 'India'
+    cql_filterParamfeature:
+      name: cql_filter
+      in: query
+      description: >-
+        To pass the cql_filter for fetching the filtered features. This is an
+        optional parameter.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: name = 'India'
+    srsParam:
+      name: srs
+      in: query
+      description: To pass the projection of the maptiles.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: EPSG:3857
+    accesstokenParam:
+      name: access_token
+      in: query
+      description: >-
+        To authorization token for the API access. It is mandatory both in case
+        of user-defined geometry as well as for the published dataset.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Bearer 5abccfb4-ac0d-4ff6-b44b-be9a144d309a
+    accesstokenSpatialParam:
+      name: access_token
+      in: query
+      description: >-
+        To authorization token for the API access. It is mandatory both in case
+        of queryType 'basic' as well as queryType 'spatialOperation'.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Bearer 5abccfb4-ac0d-4ff6-b44b-be9a144d309a
+    xParam:
+      name: x
+      in: query
+      description: To pass the x coordinate of the feature.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 457
+    yParam:
+      name: 'y'
+      in: query
+      description: To pass the y coordinate of the feature.
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 33
+    bufferParam:
+      name: buffer
+      in: query
+      description: To pass the y coordinate of the feature.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 30
+    envParam:
+      name: env
+      in: query
+      description: Enables the user to change the styling of the layer.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: >-
+        fillcolor:023e8a, fillopacity:2a9d8f,
+        strokecolor:283618,strokewidth:1,labelsize: 18, labelcolor: 772e25
+    queryTypeSingleParam:
+      name: queryType
+      in: query
+      description: >-
+        queryType value should be 'functionBased'. Mandatory when user has to
+        perform geometric operations with or without 'cql_filter'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: functionBased
+    comparisonFunctionSingleParam:
+      name: comparisonFunction
+      in: query
+      description: >-
+        The functions allowed are: <b>Area</b> and <b>Length</b>. This parameter
+        is mandatory for queryType functionBased. Applicable for only queryType
+        = 'functionBased'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: Area
+    comparisonOperatorSingleParam:
+      name: comparisonOperator
+      in: query
+      description: >-
+        The operators allowed are: =, >, <, <>, >= and <=. This parameter is
+        mandatory for queryType functionBased. Applicable for only queryType =
+        'functionBased'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: string
+      example: '='
+    comparisonValueSingleParam:
+      name: comparisonValue
+      in: query
+      description: >-
+        The value should be in numeric (in meters). This parameter is mandatory
+        for queryType functionBased. Applicable for only queryType =
+        'functionBased'.
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: number
+      example: 10
+  schemas:
+    getFeatureInfoRes:
+      title: getFeatureInfo
+      type: object
+      properties:
+        code:
+          type: string
+          description: Response code.
+          example: '200'
+        featureInfo:
+          type: object
+          properties:
+            featureInfo:
+              type: object
+              properties:
+                st_name:
+                  example: Rajasthan
+    ErrorObjectCommon:
+      title: ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Bad request. Username not found.
+    ErrorObject400:
+      title: Geoserver ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Invalid Parameter value
+        message:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Layer not found.
+        auth:
+          type: string
+          example: unsuccessful
+        code:
+          type: number
+          description: Error code.
+          example: 400
+    ErrorObject500:
+      title: Internal Server ErrorObject
+      type: object
+      properties:
+        error:
+          type: string
+          description: >-
+            Different error messages that might have occured while making a
+            particular request to the server
+          example: Something went wrong.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
