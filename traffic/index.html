@@ -14,8 +14,9 @@
             height: 100vh;
         }
     </style>
-    <script src="https://apis.mappls.com/advancedmaps/api/7d3d785e-6f2c-42a8-acf1-7554e31d1a94/map_sdk?layer=vector&v=3.0&callback=initMap1" defer
-        async></script>
+    <script
+        src="https://apis.mappls.com/advancedmaps/api/7d3d785e-6f2c-42a8-acf1-7554e31d1a94/map_sdk?layer=vector&v=3.0&callback=initMap1"
+        defer async></script>
 </head>
 
 <body>
@@ -27,8 +28,10 @@
                 zoom: 10,
             });
             map.addListener('load', function () {
-                mappls.traffic({ map: map, url:"https://tu.mapmyindia.in/advancedmaps/v2.6.16.13/traffic_flow/rasterTiles" });
-            }); 
+                mappls.traffic({ map: map 
+                    // , url: "https://tu.mapmyindia.in/advancedmaps/v2.6.16.13/traffic_flow/rasterTiles" 
+                });
+            });
         }
     </script>
 </body>
