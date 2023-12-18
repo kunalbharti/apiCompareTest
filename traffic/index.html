@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <title>Traffic on Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        html,
+        body,
+        #map {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+    <script src="https://apis.mappls.com/advancedmaps/api/7d3d785e-6f2c-42a8-acf1-7554e31d1a94/map_sdk?layer=vector&v=3.0&callback=initMap1" defer
+        async></script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        var map;
+        function initMap1() {
+            map = new mappls.Map('map', {
+                zoom: 10,
+            });
+            map.addListener('load', function () {
+                mappls.traffic({ map: map });
+            });
+        }
+    </script>
+</body>
+
+</html>
