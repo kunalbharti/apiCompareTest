@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom URL Schema Invoker</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn-public.mappls.com/about-mappls/assets/css/style.css?v=2.92" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+
+        /* .f-b-container {
+            background: #03192f;
+            padding: 40px 0;
+        } */
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-group">
+            <label for="android-url">Android Custom URL Schema:</label>
+            <textarea id="android-url" rows="4" placeholder="Enter Android custom URL schema"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="ios-url">iOS Custom URL Schema:</label>
+            <textarea id="ios-url" rows="4" placeholder="Enter iOS custom URL schema"></textarea>
+        </div>
+        <div class="button-container">
+            <button onclick="invokeURL('android')">Invoke Android URL</button>
+            <button onclick="invokeURL('ios')">Invoke iOS URL</button>
+        </div>
+    </div>
+    <footer id="mmi-f-Area" class="f-b-container">
+        <div class="mmi-container">
+            <div class="row   pb-5">
+                <div class="col-md-3">
+                    <div class="footer">
+                        <div class="mmi-footer-logo">
+                            <img src="https://cdn-public.mappls.com/about-mappls/assets/images/mappls-logo.svg"
+                                alt="Mappls logo" />
+                        </div>
+                        <div class="f-txt">
+                            <div> <b>C.E. Info Systems Ltd.</b> </div>
+                            <div style="font-size: 10px;"> (Earlier C.E. Info Systems Pvt Ltd.)</div>
+                            <p style="margin-top: 0;"><b>CIN:</b> L74899DL1995PLC065551</p>
+                            <div>
+                                The world's most advanced digital maps, geospatial software and location-based IoT
+                                technologies, providing products, platforms, APIs and solutions.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="men-fo-s">
+                        <div class="title-are">Contact Us</div>
+                        <div class="top_cT_footer"> <a href="mailto:contact@mappls.com"><span><img class="mr-2"
+                                        src="https://cdn-public.mappls.com/about-mappls/assets/images/mail_icon.png"
+                                        alt="email"></span>
+                                contact@mappls.com</a> <br>
+                            <div class="mmi_phone_no"> <span><img
+                                        src="https://cdn-public.mappls.com/about-mappls/assets/images/telephone.svg"
+                                        height="16" alt="email"></span>
+                                <a href="tel:+91 7829 774 111"><span>(Business) </span> +91 7829 774 111</a>
+                                <a href="tel:+91 9999 333 223"><span>(Support) </span> +91 9999 333 223</a>
+                            </div>
+
+                            <div class="address_mmi">
+                                <!--				<a class=" " target="_blank" href="https://maps.mapmyindia.com/eloc/MMI000"  >237, Okhla Industrial Estate, Phase 3 New Delhi – 110020</a>-->
+                                <ul class="fo-ul-le_right pl-0" style="float: none	">
+                                    <li><a href="https://www.mappls.com/mmi000" target="_blank">Delhi </a></li>
+                                    <li><a href="https://www.mappls.com/7C3A11" target="_blank">Bangalore </a></li>
+                                    <li><a href="https://www.mappls.com/goqo26">Mumbai</a></li>
+                                    <li><a style="pointer-events: none; opacity: 0.7"
+                                            href="https://www.mappls.com/@37.421419,%20-121.892905" target="_blank">San
+                                            Francisco</a></li>
+                                    <li><a href="#" style="pointer-events: none; opacity: 0.7">Tokyo</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--
+      <div class="col-md-3">
+        <div class="men-fo-s">
+          <ul>
+            <li class="title-are">Company </li>
+            <li ><a href="https://about.mappls.com/about-us">About us</a> </li>
+            <li  ><a href="https://about.mappls.com/customer">Customers </a></li>
+            <li  ><a href="https://www.mapmyindia.com/about/career" target="_blank">Careers </a></li>
+            <li  ><a href="https://www.mapmyindia.com/about/news-room" target="_blank">Newsroom </a></li>
+            <li  ><a href="https://about.mappls.com/aws/" target="_blank">Partners</a></li>
+            <li><a  href="https://www.mapmyindia.com/blog" target="_blank">Blog</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="men-fo-s">
+          <ul>
+            <li class="title-are">Helpful Links </li>
+            <li ><a href="https://www.mapmyindia.com/about/award-accolades"  target="_blank">Awards & Accolades</a> </li>
+            <li  ><a href="https://www.mapmyindia.com/about/media-kit" target="_blank">Media Kit</a></li>
+            <li  ><a href="https://www.mapmyindia.com/about/csr" target="_blank">CSR @ MapmyIndia </a></li>
+            <li><a href="https://about.mappls.com/contact">Contact Us</a></li>
+          </ul>
+        </div>
+      </div>
+-->
+                <div class="col-md-4 ml-auto">
+                    <div class="men-fo-s">
+                        <div class="title-are">Newsletter</div>
+                        <div class="input_t">
+                            <div class="mmi_input_News">
+                                <input type="email" id="emailIDN" class="mmi-in" placeholder="Enter your email address">
+                                <input type="hidden" id="odoonewsl" value="21">
+                                <input type="button" class="btn-sub" value="sumit" onclick="contactnewsl()">
+                            </div>
+                            <p class="emailn email"></p>
+                        </div>
+                        <div class="ts-inb">By signing up for our newsletter, you consent to our <a
+                                href="https://about.mappls.com/about/privacy-policy" target="_blank">privacy policy.</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footerList">
+            <div class="mmi-container">
+                <div class="row   pb-2  ">
+                    <div class="col-lg">
+                        <div class="men-fo-s  ">
+                            <ul>
+                                <li class="title-are ">Map and Data</li>
+
+
+                                <li><a href="https://about.mappls.com/map-data">Map Data</a></li>
+                                <li><a href="https://about.mappls.com/mgis/map-data">Geo-demographic Data</a></li>
+                                <li><a href="https://about.mappls.com/realview">RealView </a></li>
+                                <li><a href="https://about.mappls.com/app">Map Portal</a> </li>
+                                <li><a href="https://about.mappls.com/mappls-pin">Mappls Pin</a></li>
+                                <li><a href="https://about.mappls.com/hd-maps">HD Maps</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="men-fo-s  ">
+                            <ul>
+                                <li class="title-are m-mi-23">APIs and SDKs</li>
+                                <li><a href="https://about.mappls.com/api/" target="_blank">Map APIs and SDKs</a> </li>
+                                <li><a href="https://about.mappls.com/api/corona/" target="_blank">Combat Covid APIs</a>
+                                </li>
+
+                                <li><a href="https://about.mappls.com/api/mobility-and-tracking/"
+                                        target="_blank">InTouch
+                                        SDK</a></li>
+                                <li><a href="https://about.mappls.com/workmate/" target="_blank">Workmate APIs</a></li>
+                                <li class="comingsoon"> <a href="https://about.mappls.com/#">RealView APIs</a></li>
+                                <li><a href="https://about.mappls.com/api/mgis-api">GIS and Analytics APIs</a></li>
+                                <li class="comingsoon"><a href="https://about.mappls.com/#">AI APIs</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg ">
+                        <div class="men-fo-s ">
+                            <ul>
+                                <li class="title-are m-mi-23">GIS, Analytics, and AI </li>
+                                <li><a href="https://about.mappls.com/mgis">mGIS</a> </li>
+                                <li><a href="https://about.mappls.com/geospatial-and-analytics">Geospatial and
+                                        Analytics</a>
+                                </li>
+                                <li><a href="https://about.mappls.com/skydnn">Skydnn</a></li>
+                                <li><a href="https://about.mappls.com/insight">Insight</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg ">
+                        <div class="men-fo-s  	">
+                            <ul>
+                                <li class="title-are m-mi-23">IoT and Automation </li>
+                                <li><a href="https://about.mappls.com/iot">IoT & Telematics Solutions</a> </li>
+
+                                <li><a href="https://about.mappls.com/intouch-platform">InTouch Platform</a></li>
+                                <li><a href="https://about.mappls.com/workmate">Workmate</a></li>
+                                <li><a href="https://about.mappls.com/hardware-and-sensors">Hardware & Sensors</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg ">
+                        <div class="men-fo-s  ">
+                            <ul>
+                                <li class="title-are m-mi-23">Navigation and Mobility</li>
+                                <li><a href="https://about.mappls.com/automotive">NCASE Automotive Suite</a> </li>
+                                <li><a href="https://about.mappls.com/navimaps">NaviMaps</a> </li>
+                                <li><a href="https://about.mappls.com/mappls-app">Mappls App</a></li>
+                                <li><a href="https://about.mappls.com/mappls-gadgets">Mappls Gadgets </a></li>
+                                <li><a href="https://about.mappls.com/api/navigation-sdk" target="_blank">Navigation
+                                        SDK</a></li>
+                                <li class="comingsoon"><a href="#">Traffic AI</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-lg">
+                        <div class="men-fo-s">
+                            <ul>
+                                <li class="title-are ">Solutions </li>
+                                <li><a href="https://about.mappls.com/enterprise">Enterprise</a> </li>
+                                <li><a href="https://about.mappls.com/automotive">Automotive</a></li>
+                                <li><a href="https://about.mappls.com/government">Government</a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="men-fo-s">
+                            <ul>
+                                <li class="title-are">Consumer </li>
+                                <li><a href="https://about.mappls.com/app">Map portal</a> </li>
+                                <li><a href="https://about.mappls.com/mappls-app">Mappls App</a></li>
+                                <li><a href="https://about.mappls.com/mappls-gadgets/">Mappls Gadgets </a></li>
+                                <li><a href="https://about.mappls.com/mappls-pin">Mappls Pin</a></li>
+                                <!-- <li><a href="https://about.mappls.com/latest-political-map-of-india"
+                                    target="_blank">Political map of India</a></li>
+                            <li><a href="https://about.mappls.com/india-map">India maps</a></li>
+-->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="men-fo-s">
+                            <ul>
+                                <li class="title-are">Developers </li>
+                                <li><a href="https://about.mappls.com/api/advanced-maps/doc/autosuggest-api"
+                                        target="_blank">Documentation</a> </li>
+
+                                <li><a href="https://about.mappls.com/api/corona/" target="_blank">COVID-19 info </a>
+                                </li>
+                                <li><a href="https://about.mappls.com/api/switch-to-mapmyIndia" target="_blank">Migrate
+                                        to
+                                        Mappls</a></li>
+                                <li><a href="https://github.com/mappls-api" target="_blank">GitHub</a></li>
+                                <li><a href="https://stackoverflow.com/questions/tagged/mapmyindia-api"
+                                        target="_blank">Stack Overflow</a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="men-fo-s">
+                            <ul>
+                                <li class="title-are"> Company</li>
+                                <li><a href="https://about.mappls.com/about">About Mappls</a> </li>
+                                <li><a href="https://about.mappls.com/partner-program">Partner program</a> </li>
+                                <li><a href="https://about.mappls.com/customer">Customers</a> </li>
+                                <li><a href="https://about.mappls.com/blog" target="_blank">Blog </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg">
+                        <div class="men-fo-s">
+                            <ul>
+                                <li class="title-are">Resources</li>
+                                <li><a href="https://about.mappls.com/aws">Partners</a></li>
+                                <li><a href="https://about.mappls.com/careers">Careers</a></li>
+                                <li><a href="https://about.mappls.com/newsroom" target="_blank">Newsroom</a></li>
+                                <li><a href="https://about.mappls.com/about/award-accolades" target="_blank">Awards &
+                                        Accolades</a></li>
+                                <li><a href="https://about.mappls.com/about/media-kit" target="_blank">Media Kit</a>
+                                </li>
+                                <li><a href="https://about.mappls.com/about/csr" target="_blank"> CSR@mappls </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copy_footer">
+            <div class="footer-top-menu">
+                <div class="mmi-container">
+                    <div class="row   pb-2">
+                        <div class="col-md-12" style="    display: flex;    justify-content: center;">
+                            <ul class="mmi_social_icons">
+                                <li><a target="_blank" href="https://www.facebook.com/Mapplsofficial"><img
+                                            src="https://cdn-public.mappls.com/about-mappls/assets/images/footer_f.png"></a>
+                                </li>
+                                <li><a target="_blank" href="https://www.linkedin.com/company/mappls/"><img
+                                            src="https://cdn-public.mappls.com/about-mappls/assets/images/fo_in.png"></a>
+                                </li>
+                                <li><a target="_blank" href="http://www.twitter.com/mappls"><img
+                                            src="https://cdn-public.mappls.com/about-mappls/assets/images/fo-tiw.png"></a>
+                                </li>
+                                <li><a target="_blank" href="https://www.instagram.com/mapplsofficial/"><img
+                                            src="https://cdn-public.mappls.com/about-mappls/assets/images/fo-ins.png"></a>
+                                </li>
+                                <li><a target="_blank"
+                                        href="https://www.youtube.com/channel/UCAWvWsh-dZLLeUU7_J9HiOA"><img
+                                            src="https://cdn-public.mappls.com/about-mappls/assets/images/fo-you.png"></a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom-menu">
+                <div class="mmi-container">
+                    <div class="row   pb-2">
+                        <div class="col-md-6">
+                            <p>© Copyright 2023. CE Info Systems Ltd. All rights reserved.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="ul-le">
+                                <li><a href="https://about.mappls.com/about/terms-conditions" target="_blank">Terms </a>
+                                </li>
+                                <li><a href="https://about.mappls.com/about/privacy-policy" target="_blank">Policy </a>
+                                </li>
+                                <!--				<li><a href="https://www.mapmyindia.com/pdf/mapmyIndia-sustainability-policy-healt-labour-rules-supplir-sustainability.pdf" target="_blank">Legal</a></li>-->
+                                <li><a href="#" target="_blank" style="pointer-events: none; opacity: 0.7">Site Map</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function invokeURL(platform) {
+            let url;
+            if (platform === 'android') {
+                url = document.getElementById('android-url').value;
+            } else if (platform === 'ios') {
+                url = document.getElementById('ios-url').value;
+            }
+
+            if (url) {
+                window.location.href = url;
+            } else {
+                alert('Please enter a valid URL schema');
+            }
+        }
+    </script>
+</body>
+
+</html>
