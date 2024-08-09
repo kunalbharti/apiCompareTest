@@ -6,17 +6,71 @@
         src="https://apis.mappls.com/advancedmaps/api/495c2e33e59a6d8dbf8a745ededb9d51/map_sdk_plugins?v=3.0&libraries=tracking"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.2/intouch-sdk.js"></script>
+    <style>
+        /* Container for the info box */
+        #infoBox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        /* Hide the box when collapsed */
+        #infoBox.collapsed {
+            transform: translateX(-100%);
+        }
+
+        /* Collapsible button */
+        #collapseButton {
+            position: absolute;
+            top: 10px;
+            left: 100%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Responsive design */
+        @media screen and (max-width: 600px) {
+            #infoBox {
+                width: 90%;
+                left: 5%;
+            }
+        }
+    </style>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <body onload="Auth_token_generate();">
-    <div id="mapdiv"></div>
+    <div id="mapdiv" style="height: 100vh; width: 100vw;"></div>
+
+    <!-- Info Box -->
+    <div id="infoBox">
+        <button id="collapseButton" onclick="toggleInfoBox()">></button>
+        <div>
+            <p><strong>Address:</strong> <span id="address">N/A</span></p>
+            <p><strong>Speed:</strong> <span id="speed">N/A</span> km/h</p>
+            <p><strong>Latitude:</strong> <span id="latitude">N/A</span></p>
+            <p><strong>Longitude:</strong> <span id="longitude">N/A</span></p>
+            <p><strong>Time:</strong> <span id="gpsTime">N/A</span></p>
+        </div>
+    </div>
 </body>
+
 <script>
     var token;
     var intouchSdk = new IntouchSdk();
-    
-    // token generating
+
+    // Token generating
     function Auth_token_generate() {
         $.ajax({
             data: {
@@ -46,6 +100,12 @@
 
     function deviceDataCallback(data) {
         console.log(data);
+        // Update the info box with the received data
+        document.getElementById("address").textContent = data.location.address;
+        document.getElementById("speed").textContent = data.location.speedKph;
+        document.getElementById("latitude").textContent = data.location.latitude;
+        document.getElementById("longitude").textContent = data.location.longitude;
+        document.getElementById("gpsTime").textContent = new Date(data.location.gpsTime * 1000).toLocaleString();
     }
 
     function updateToken() {
@@ -57,16 +117,27 @@
         console.log("token before intouch sdk initialize: " + token);
         intouchSdk.initialize(mapdiv, token, updateToken); // For Map access token Use the Map API Rest key
 
-        //starts the widget with internally active live visualization of tracked device.
+        // Start the widget with internally active live visualization of tracked device.
         var deviceObj = {};
-        deviceObj.customIconUrl = "https://mmi-api-team.s3.ap-south-1.amazonaws.com/API-Team/kunal/vehicleIcon.png";
-        //deviceObj.iconType = 'car';// Allowed types are "bike", "car", "bus", "truck", "men".
-        deviceObj.deviceId = 6757024; // Enter the Device Id for which you want to see the Tracking. 
+        deviceObj.customIconUrl = "https://mmi-api-team.s3.ap-south-1.amazonaws.com/API-Team/kunal/vehicleIcon_64.png";
+        deviceObj.deviceId = 1363489; // Enter the Device Id for which you want to see the Tracking. 
         deviceObj.bindPopUp = true;
         deviceObj.showTrail = true; // to show points trail
         deviceObj.timeout = 5;
         deviceObj.polylineTrail = true; // to show trail as polyline
         intouchSdk.trackDevice(deviceObj, deviceDataCallback);
+    }
+
+    function toggleInfoBox() {
+        var infoBox = document.getElementById("infoBox");
+        var collapseButton = document.getElementById("collapseButton");
+        if (infoBox.classList.contains("collapsed")) {
+            infoBox.classList.remove("collapsed");
+            collapseButton.textContent = "<";
+        } else {
+            infoBox.classList.add("collapsed");
+            collapseButton.textContent = ">";
+        }
     }
 </script>
 </html>
