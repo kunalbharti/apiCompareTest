@@ -5,7 +5,7 @@
     <script
         src="https://apis.mappls.com/advancedmaps/api/495c2e33e59a6d8dbf8a745ededb9d51/map_sdk_plugins?v=3.0&libraries=tracking"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.2/intouch-sdk.js"></script>
+    <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.2.3/intouch-sdk.js"></script>
     <style>
         /* Container for the info box */
         #infoBox {
@@ -61,7 +61,8 @@
             <p><strong>Speed:</strong> <span id="speed">N/A</span> km/h</p>
             <p><strong>Latitude:</strong> <span id="latitude">N/A</span></p>
             <p><strong>Longitude:</strong> <span id="longitude">N/A</span></p>
-            <p><strong>Time:</strong> <span id="gpsTime">N/A</span></p>
+            <p><strong>Last Location Received Time:</strong> <span id="gpsTime">N/A</span></p>
+            <p><strong>Last Communication Time:</strong> <span id="gprsTime">N/A</span></p>
         </div>
     </div>
 </body>
@@ -106,6 +107,7 @@
         document.getElementById("latitude").textContent = data.location.latitude;
         document.getElementById("longitude").textContent = data.location.longitude;
         document.getElementById("gpsTime").textContent = new Date(data.location.gpsTime * 1000).toLocaleString();
+        document.getElementById("gprsTime").textContent = new Date(data.location.gprsTime * 1000).toLocaleString();
     }
 
     function updateToken() {
@@ -119,11 +121,12 @@
 
         // Start the widget with internally active live visualization of tracked device.
         var deviceObj = {};
-        deviceObj.customIconUrl = "https://mmi-api-team.s3.ap-south-1.amazonaws.com/API-Team/kunal/vehicleIcon_64.png";
-        deviceObj.deviceId = 1363489; // Enter the Device Id for which you want to see the Tracking. 
+        //deviceObj.customIconUrl = "https://mmi-api-team.s3.ap-south-1.amazonaws.com/API-Team/kunal/vehicleIcon_64.png";
+        deviceObj.deviceId = 6757024; // Enter the Device Id for which you want to see the Tracking.
+        deviceObj.iconType = 'men'; // Allowed types are "bike", "car", "bus", "truck", "men".
         deviceObj.bindPopUp = true;
         deviceObj.showTrail = true; // to show points trail
-        deviceObj.timeout = 5;
+        deviceObj.timeout = 10;
         deviceObj.polylineTrail = true; // to show trail as polyline
         intouchSdk.trackDevice(deviceObj, deviceDataCallback);
     }
