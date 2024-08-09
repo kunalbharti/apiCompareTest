@@ -1,0 +1,72 @@
+<html>
+<head>
+    <script
+        src="https://apis.mappls.com/advancedmaps/api/495c2e33e59a6d8dbf8a745ededb9d51/map_sdk?layer=vector&v=3.0"></script>
+    <script
+        src="https://apis.mappls.com/advancedmaps/api/495c2e33e59a6d8dbf8a745ededb9d51/map_sdk_plugins?v=3.0&libraries=tracking"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.2/intouch-sdk.js"></script>
+</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<body onload="Auth_token_generate();">
+    <div id="mapdiv"></div>
+</body>
+<script>
+    var token;
+    var intouchSdk = new IntouchSdk();
+    
+    // token generating
+    function Auth_token_generate() {
+        $.ajax({
+            data: {
+                "grant_type": "client_credentials",
+                "client_id": "e9f870a0f47147b357faf5a557aad148",
+                "client_secret": "e9f870a0f47147b357faf5a557aad148"
+            },
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            method: 'POST',
+            crossDomain: true,
+            async: true,
+            url: 'https://outpost.mappls.com/api/security/oauth/token',
+            error: function (data) {
+                console.log(data);
+                alert('An error has occurred');
+            },
+            success: function (data) {
+                token = data.access_token;
+                console.log("token generated: " + token);
+                // Initialize intouch SDK after token is successfully generated
+                initializeIntouchSdk();
+            }
+        });
+    }
+
+    function deviceDataCallback(data) {
+        console.log(data);
+    }
+
+    function updateToken() {
+        console.log("tokenUpdated: " + token);
+        intouchSdk.updateAccessToken(token); // While adding the token Don't use Bearer word, since it is being internally added.
+    }
+
+    function initializeIntouchSdk() {
+        console.log("token before intouch sdk initialize: " + token);
+        intouchSdk.initialize(mapdiv, token, updateToken); // For Map access token Use the Map API Rest key
+
+        //starts the widget with internally active live visualization of tracked device.
+        var deviceObj = {};
+        deviceObj.customIconUrl = "https://mmi-api-team.s3.ap-south-1.amazonaws.com/API-Team/kunal/vehicleIcon.png";
+        //deviceObj.iconType = 'car';// Allowed types are "bike", "car", "bus", "truck", "men".
+        deviceObj.deviceId = 6757024; // Enter the Device Id for which you want to see the Tracking. 
+        deviceObj.bindPopUp = true;
+        deviceObj.showTrail = true; // to show points trail
+        deviceObj.timeout = 5;
+        deviceObj.polylineTrail = true; // to show trail as polyline
+        intouchSdk.trackDevice(deviceObj, deviceDataCallback);
+    }
+</script>
+</html>
