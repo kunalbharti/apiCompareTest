@@ -17,6 +17,10 @@
     <script
         src="https://apis.mappls.com/advancedmaps/api/dced5f2c21ec4cf8bd246f92e0332e34/map_sdk?layer=vector&v=3.0&callback=initMap1"
         defer async></script>
+    <!-- <script
+        src="https://apis.mappls.com/advancedmaps/api/88d53fcb-be3e-4ef9-be04-da3650811ab8/map_sdk?layer=vector&v=3.0&callback=initMap1"
+        defer async></script> -->
+
 </head>
 
 <body>
@@ -28,8 +32,9 @@
                 center: [28.61275005371764, 77.23087398009862],
                 fullscreenControl: false,
                 zoom: 14,
-                clickableIcons: false
+                clickableIcons: false                
             });
+            mappls.setStyle('sublime-grey-tracking');
         }
     </script>
 </body>
