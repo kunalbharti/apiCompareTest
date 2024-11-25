@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- Integrate India's best interactive maps from MapmyIndia into your browser application by simply including MapmyIndia's interactive map API in your script source as shown in next line -->
     <script src="https://apis.mappls.com/advancedmaps/v1/dced5f2c21ec4cf8bd246f92e0332e34/map_load?v=1.5"></script>
-    <!-- <script src="https://apis.mappls.com/advancedmaps/v1/88d53fcb-be3e-4ef9-be04-da3650811ab8/map_load?v=1.5"></script> -->
+    <!-- <script src="https://apis.mappls.com/advancedmaps/v1/92e6b1f6-98d9-451e-85fa-253a35afcdd4/map_load?v=1.5"></script> -->
     <style>        
         html,
         body,
@@ -15,6 +15,9 @@
             padding: 0;
             width: 100%;
             height: 100%;
+        }
+        #map .leaflet-tile {
+            filter: grayscale(100%) !important;
         }
     </style>
 
@@ -41,7 +44,8 @@
                 hybrid: false,
                 search: false,
                 location: true,
-                zoom: 14
+                zoom: 14,
+                clickableIcons:false
             }
         ); /*map initialized*/
 
