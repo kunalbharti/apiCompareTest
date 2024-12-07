@@ -44,13 +44,13 @@ jobObj.polylineColor='#B8860B';
 jobObj.polylineThickness=5; 
 jobObj.polylineType='solid'; 
 jobObj.fitBound='on route';//'no fitBound','on route','on vehcile' 
-
+intouchSdk.trackJob(jobObj,getJobDetails);
 function getJobDetails(data) {
     console.log(data);
 }
 
-intouchSdk.trackJob(jobObj,getJobDetails);
-setInterval(trackJob, 5000);
+
+setInterval(getJobDetails, 5000);
 
 </script>
 
