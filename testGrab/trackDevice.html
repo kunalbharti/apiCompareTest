@@ -1,7 +1,7 @@
 <html>
 <head>
-<script src="https://apis.mappls.com/advancedmaps/api/6b8b61d5-42ca-4dbc-a87f-cd4e5045aa8c/map_sdk?layer=vector&v=3.0"></script>
-<script src="https://apis.mappls.com/advancedmaps/api/6b8b61d5-42ca-4dbc-a87f-cd4e5045aa8c/map_sdk_plugins?v=3.0&libraries=tracking"></script>
+<script src="https://apis.mappls.com/advancedmaps/api/b4ca1951-4b61-4040-948a-5a739c492924/map_sdk?layer=vector&v=3.0"></script>
+<script src="https://apis.mappls.com/advancedmaps/api/b4ca1951-4b61-4040-948a-5a739c492924/map_sdk_plugins?v=3.0&libraries=tracking"></script>
 <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.5/intouch-sdk.js"></script>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,10 +16,10 @@ function deviceDataCallback(data) {
 
 function updateToken() {
     console.log("tokenUpdated");
-    intouchSdk.updateAccessToken("6b8b61d5-42ca-4dbc-a87f-cd4e5045aa8c"); // While adding the token Don't use Bearer word, since it is being internally added.
+    intouchSdk.updateAccessToken("b4ca1951-4b61-4040-948a-5a739c492924"); // While adding the token Don't use Bearer word, since it is being internally added.
 }
 	//intouchSdk.initialize(mapdiv, "205e0a4f-b421-4df2-9ac5-e2df9db6f689", updateToken); 
-intouchSdk.initialize(mapdiv, "6b8b61d5-42ca-4dbc-a87f-cd4e5045aa8c", updateToken); // For Map access token Use the Map API Rest key
+intouchSdk.initialize(mapdiv, "b4ca1951-4b61-4040-948a-5a739c492924", updateToken); // For Map access token Use the Map API Rest key
 
 // var deviceObj = {};
 // // deviceObj.customIconUrl = "";
@@ -34,7 +34,7 @@ intouchSdk.initialize(mapdiv, "6b8b61d5-42ca-4dbc-a87f-cd4e5045aa8c", updateToke
 
 var  jobObj={};
 var eta;
-jobObj.jobId="6753d34f1ea81d1035ebb9f0";
+jobObj.jobId="6757ce6f067f49104f479fb6";
 jobObj.vehicleIconUrl='https://cdn.mapmyindia.com/Intouch/web/img/Start-marker.png'; 
 // jobObj.sourceIconUrl; 
 // jobObj.destinationIconUrl=''; 
@@ -45,12 +45,11 @@ jobObj.polylineThickness=5;
 jobObj.polylineType='solid'; 
 jobObj.fitBound='on route';//'no fitBound','on route','on vehcile' 
 intouchSdk.trackJob(jobObj,getJobDetails);
+
 function getJobDetails(data) {
     console.log(data);
 }
 
-
-setInterval(getJobDetails, 5000);
 
 </script>
 
