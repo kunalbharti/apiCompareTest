@@ -1,57 +1,69 @@
 <html>
+
 <head>
-<script src="https://apis.mappls.com/advancedmaps/api/b4ca1951-4b61-4040-948a-5a739c492924/map_sdk?layer=vector&v=3.0"></script>
-<script src="https://apis.mappls.com/advancedmaps/api/b4ca1951-4b61-4040-948a-5a739c492924/map_sdk_plugins?v=3.0&libraries=tracking"></script>
-<script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.5/intouch-sdk.js"></script>
+    <script
+        src="https://apis.mappls.com/advancedmaps/api/250ec0bc-263e-48b2-b0b9-ff5588308c9e/map_sdk?layer=vector&v=3.0"></script>
+    <script
+        src="https://apis.mappls.com/advancedmaps/api/250ec0bc-263e-48b2-b0b9-ff5588308c9e/map_sdk_plugins?v=3.0&libraries=tracking"></script>
+    <script src="https://cdn.mapmyindia.com/Intouch/sdk/v2.5/intouch-sdk.js"></script>
 </head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <body>
-	 <div id="mapdiv"></div>
+
+<body>
+    <div id="mapdiv"></div>
 </body>
-	<script type="text/javascript" defer=defer>
-var intouchSdk = new IntouchSdk();
-function deviceDataCallback(data) {
-    console.log(data);
-}
+<script type="text/javascript" defer=defer>
+    var intouchSdk = new IntouchSdk();
+    function deviceDataCallback(data) {
+        console.log(data);
+    }
 
-function updateToken() {
-    console.log("tokenUpdated");
-    intouchSdk.updateAccessToken("b4ca1951-4b61-4040-948a-5a739c492924"); // While adding the token Don't use Bearer word, since it is being internally added.
-}
-	//intouchSdk.initialize(mapdiv, "205e0a4f-b421-4df2-9ac5-e2df9db6f689", updateToken); 
-intouchSdk.initialize(mapdiv, "b4ca1951-4b61-4040-948a-5a739c492924", updateToken); // For Map access token Use the Map API Rest key
+    function updateToken() {
+        console.log("tokenUpdated");
+        intouchSdk.updateAccessToken("250ec0bc-263e-48b2-b0b9-ff5588308c9e"); // While adding the token Don't use Bearer word, since it is being internally added.
+    }
+    //intouchSdk.initialize(mapdiv, "205e0a4f-b421-4df2-9ac5-e2df9db6f689", updateToken); 
+    intouchSdk.initialize(mapdiv, "250ec0bc-263e-48b2-b0b9-ff5588308c9e", updateToken); // For Map access token Use the Map API Rest key
 
-// var deviceObj = {};
-// // deviceObj.customIconUrl = "";
-// deviceObj.iconType = 'car';// Allowed types are "bike", "car", "bus", "truck", "men".
-// deviceObj.deviceId = 6757024; // Enter the Device Id for which you want to see the Tracking. 
-// deviceObj.bindPopUp = true;
-//intouchSdk.trackDevice(deviceObj, deviceDataCallback);
+    // var deviceObj = {};
+    // // deviceObj.customIconUrl = "";
+    // deviceObj.iconType = 'car';// Allowed types are "bike", "car", "bus", "truck", "men".
+    // deviceObj.deviceId = 6757024; // Enter the Device Id for which you want to see the Tracking. 
+    // deviceObj.bindPopUp = true;
+    //intouchSdk.trackDevice(deviceObj, deviceDataCallback);
 
-// function getEta(data){
-//     console.log(data);
-// }            
+    // function getEta(data){
+    //     console.log(data);
+    // }            
 
-var  jobObj={};
-var eta;
-jobObj.jobId="6757ce6f067f49104f479fb6";
-jobObj.vehicleIconUrl='https://cdn.mapmyindia.com/Intouch/web/img/Start-marker.png'; 
-// jobObj.sourceIconUrl; 
-// jobObj.destinationIconUrl=''; 
-// jobObj.mapStyling='standard-night';
-jobObj.liveRefresh = 3; //new i/p param: takes values in seconds.
-jobObj.polylineColor='#B8860B'; 
-jobObj.polylineThickness=5; 
-jobObj.polylineType='solid'; 
-jobObj.fitBound='on route';//'no fitBound','on route','on vehcile' 
-intouchSdk.trackJob(jobObj,getJobDetails);
+    var jobObj = {};
+    var eta;
+    jobObj.jobId = "675af2ddc98f4e10255049c2";
+    jobObj.vehicleIconUrl = 'https://cdn.mapmyindia.com/Intouch/web/img/Start-marker.png';
+    // jobObj.sourceIconUrl; 
+    // jobObj.destinationIconUrl=''; 
+    // jobObj.mapStyling='standard-night';
+    jobObj.liveRefresh = 5; //new i/p param: takes values in seconds.
+    jobObj.polylineColor = '#B8860B';
+    jobObj.polylineThickness = 5;
+    jobObj.polylineType = 'solid';
+    jobObj.fitBound = 'on route';//'no fitBound','on route','on vehcile' 
 
-function getJobDetails(data) {
-    console.log(data);
-}
+    var mapObj = intouchSdk.getMap();
+
+    mapObj.addListener('load', function () 
+        { 
+            console.log("Event Trigerred: " + 'load' + " at time: " + Date.now());            
+            intouchSdk.trackJob(jobObj,getJobDetails); 
+        }
+    );
+    // setInterval(, 50);
+
+    function getJobDetails(data) {
+        console.log("Event Trigerred: " + data + " at time: " + Date.now());
+    }
 
 
 </script>
 
 </html>
-
