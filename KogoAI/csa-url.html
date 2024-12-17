@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappls CSA URL based Chat</title>
+    <style>
+        /* Reset */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        /* Branding */
+        /* .chatSpace {
+            position: relative;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        } */
+        
+        .mappls-brand {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chat-button {
+            background-color: #fbdcdc;
+            /* Mappls blue color */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .brand-logo {
+            margin-top: 10px;
+            width: 100px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+
+        .brand-logo:hover {
+            opacity: 1;
+        }
+    </style>
+    <script src="https://d2uqfaaruyq2pr.cloudfront.net/js/kogoos-assistant.js"></script>
+</head>
+
+<body>
+
+    <h1 style="text-align: center; margin-top: 20vh">Mappls CSA URL based Chat</h1>
+    <!-- <div id="chatSpace" class="chatSpace"></div> -->
+    <div class="mappls-brand">
+        <!-- Chat Button -->
+        <button class="chat-button" id="chatButton" onclick="openChatBox()">
+            <img class="chat-icon" src="https://img.icons8.com/ios-filled/50/40C057/chat.png" alt="Chat Icon">
+        </button>
+
+        <!-- Brand Logo -->
+        <img class="brand-logo" src="https://about.mappls.com/images/mappls-logo.svg" alt="Mappls Logo">
+    </div>
+
+    <script>
+        function openChatBox() {
+            // Logic for opening the chat box goes here.
+            let kogoChat = new KogoChat();
+            kogoChat.init({
+                module: ["chat"],
+                container: null, // Pass the ID of the element where you want to append the chat window
+                token: "v14yeu8iswr1721993461f4pi3xfaxv7"
+            });
+
+            console.log("Chat box opened!");
+        }
+    </script>
+</body>
+
+</html>
