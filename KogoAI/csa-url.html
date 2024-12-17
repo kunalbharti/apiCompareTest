@@ -99,6 +99,10 @@
             });
 
             console.log("Chat box opened!");
+            // Disable the button after first click
+            document.getElementById('chatButton').disabled = true;
+            document.getElementById('chatButton').style.cursor = 'not-allowed';
+            document.getElementById('chatButton').style.opacity = '0.6';
         }
     </script>
 </body>
