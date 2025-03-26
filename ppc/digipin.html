@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGIPIN Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .converter {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        button {
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #007BFF;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>DIGIPIN Converter</h1>
+
+    <!-- DIGIPIN to Lat/Lng Conversion -->
+    <div class="converter">
+        <h2>Convert DIGIPIN to Latitude/Longitude</h2>
+        <label for="digipin">Enter DIGIPIN:</label><br>
+        <input type="text" id="digipin" placeholder="e.g., 8WG-36X-9WP6"><br>
+        <button onclick="convertToLatLng()">Convert to Lat/Lng</button>
+    </div>
+
+    <!-- Lat/Lng to DIGIPIN Conversion -->
+    <div class="converter">
+        <h2>Convert Latitude/Longitude to DIGIPIN</h2>
+        <label for="latitude">Enter Latitude:</label><br>
+        <input type="number" id="latitude" placeholder="e.g., 12.9693224430084" step="any"><br>
+        <label for="longitude">Enter Longitude:</label><br>
+        <input type="number" id="longitude" placeholder="e.g., 77.6415350437164" step="any"><br>
+        <button onclick="convertToDigipin()">Convert to DIGIPIN</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        // Function to convert DIGIPIN to Latitude/Longitude
+        function Get_LatLng_By_Digipin(vDigiPin) {
+            vDigiPin = vDigiPin.replaceAll('-', '');
+            if (vDigiPin.length != 10) return "Invalid DIGIPIN";
+
+            var L1 = [['0', '2', '0', '0'], ['3', '4', '5', '6'], ['G', '8', '7', 'M'], ['J', '9', 'K', 'L']];
+            var L2 = [['J', 'G', '9', '8'], ['K', '3', '2', '7'], ['L', '4', '5', '6'], ['M', 'P', 'W', 'X']];
+            var MinLat = 1.50, MaxLat = 39.00, MinLng = 63.50, MaxLng = 99.00, LatDivBy = 4, LngDivBy = 4;
+
+            for (let Lvl = 0; Lvl < 10; Lvl++) {
+                let ri = -1, ci = -1, digipinChar = vDigiPin.charAt(Lvl);
+                let LatDivVal = (MaxLat - MinLat) / LatDivBy, LngDivVal = (MaxLng - MinLng) / LngDivBy;
+                let grid = Lvl === 0 ? L1 : L2;
+
+                for (let r = 0; r < LatDivBy; r++) {
+                    for (let c = 0; c < LngDivBy; c++) {
+                        if (grid[r][c] === digipinChar) {
+                            ri = r;
+                            ci = c;
+                            break;
+                        }
+                    }
+                }
+
+                if (ri === -1 || ci === -1) return "Invalid DIGIPIN";
+
+                let Lat1 = MaxLat - (LatDivVal * (ri + 1));
+                let Lat2 = MaxLat - (LatDivVal * ri);
+                let Lng1 = MinLng + (LngDivVal * ci);
+                let Lng2 = MinLng + (LngDivVal * (ci + 1));
+
+                MinLat = Lat1; MaxLat = Lat2; MinLng = Lng1; MaxLng = Lng2;
+            }
+
+            let cLat = ((MaxLat + MinLat) / 2).toFixed(13);
+            let cLng = ((MaxLng + MinLng) / 2).toFixed(13);
+
+            return `${cLat}, ${cLng}`;
+        }
+
+        // Function to convert Latitude/Longitude to DIGIPIN
+        function Get_DIGIPIN(lat, lon) {
+            var L1 = [['0', '2', '0', '0'], ['3', '4', '5', '6'], ['G', '8', '7', 'M'], ['J', '9', 'K', 'L']];
+            var L2 = [['J', 'G', '9', '8'], ['K', '3', '2', '7'], ['L', '4', '5', '6'], ['M', 'P', 'W', 'X']];
+            var MinLat = 1.50, MaxLat = 39.00, MinLon = 63.50, MaxLon = 99.00, LatDivBy = 4, LonDivBy = 4;
+            var vDIGIPIN = '';
+
+            if (lat < MinLat || lat > MaxLat || lon < MinLon || lon > MaxLon) return "Latitude/Longitude Out of Range";
+
+            for (let Lvl = 1; Lvl <= 10; Lvl++) {
+                let LatDivDeg = (MaxLat - MinLat) / LatDivBy;
+                let LonDivDeg = (MaxLon - MinLon) / LonDivBy;
+
+                let r = Math.floor((MaxLat - lat) / LatDivDeg);
+                let c = Math.floor((lon - MinLon) / LonDivDeg);
+
+                vDIGIPIN += Lvl === 1 ? L1[r][c] : L2[r][c];
+                if (Lvl === 3 || Lvl === 6) vDIGIPIN += "-";
+
+                MinLat = MaxLat - (LatDivDeg * (r + 1));
+                MaxLat = MaxLat - (LatDivDeg * r);
+                MinLon = MinLon + (LonDivDeg * c);
+                MaxLon = MinLon + LonDivDeg;
+            }
+
+            return vDIGIPIN;
+        }
+
+        // UI Handlers
+        function convertToLatLng() {
+            const digipin = document.getElementById("digipin").value;
+            const result = Get_LatLng_By_Digipin(digipin);
+            document.getElementById("result").innerText = `Lat/Lng: ${result}`;
+        }
+
+        function convertToDigipin() {
+            const lat = parseFloat(document.getElementById("latitude").value);
+            const lon = parseFloat(document.getElementById("longitude").value);
+            const result = Get_DIGIPIN(lat, lon);
+            document.getElementById("result").innerText = `DIGIPIN: ${result}`;
+        }
+    </script>
+</body>
+
+</html>
